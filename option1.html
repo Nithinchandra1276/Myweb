@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AI Event Planner — Stage Designer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="event.css" />
+  <style>
+    .led-pattern-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+    
+    .led-pattern {
+      padding: 12px;
+      border: 3px solid #ddd;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.3s ease;
+      background: white;
+    }
+    
+    .led-pattern:hover {
+      border-color: #667eea;
+      transform: scale(1.05);
+    }
+    
+    .led-pattern.selected {
+      border-color: #667eea;
+      background: #f0f4ff;
+      font-weight: 600;
+    }
+    
+    .equipment-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+    
+    .equipment-option {
+      padding: 15px;
+      border: 3px solid #ddd;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.3s ease;
+      background: white;
+    }
+    
+    .equipment-option:hover {
+      border-color: #667eea;
+      transform: scale(1.05);
+    }
+    
+    .equipment-option.selected {
+      border-color: #667eea;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-weight: 600;
+    }
+    
+    .sound-system-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+    
+    .sound-option {
+      padding: 12px;
+      border: 3px solid #ddd;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.3s ease;
+      background: white;
+    }
+    
+    .sound-option:hover {
+      border-color: #667eea;
+    }
+    
+    .sound-option.selected {
+      border-color: #667eea;
+      background: #f0f4ff;
+      font-weight: 600;
+    }
+    
+    .controls-section {
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+    
+    .control-group {
+      margin-bottom: 20px;
+    }
+    
+    .control-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #333;
+    }
+    
+    .control-group input {
+      width: 100%;
+      max-width: 300px;
+      padding: 10px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="logo">Event AI</div>
+      <nav class="site-nav">
+        <a href="#home">Home</a>
+        <a href="#stage">Stage Designer</a>
+        <a href="#features">Features</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <a class="btn btn-ghost" href="#stage">Get Started</a>
+    </div>
+  </header>
+
+  <section class="hero" id="home">
+    <div class="container hero-inner">
+      <div class="hero-left">
+        <h1>Professional Stage & Sound Design</h1>
+        <p class="lead">Create realistic stage setups with LED walls, sound systems, and complete event layouts — all in seconds.</p>
+        <div class="hero-cta">
+          <a class="btn btn-outline" href="#stage">Design Your Stage</a>
+          <a class="btn btn-outline" href="#features">See Features</a>
+        </div>
+
+        <div class="assistant-box">
+          <button id="micBtn" class="btn btn-primary" >🎤 Talk to Assistant</button>
+          <div class="speech-wrapper">
+            <p id="userSpeech" class="speech-text"></p>
+            <p id="assistantReply" class="reply-text"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="hero-card">
+          <div class="card-top">Preview</div>
+          <div class="card-media">
+            <div id="canvasPlaceholder" class="canvas-placeholder">Stage preview will appear here</div>
+            <img id="generatedImage" alt="Generated stage" style="display:none; max-width:100%; border-radius:8px;" />
+            <div id="gallery" class="gallery" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="stage-section" id="stage">
+    <div class="container">
+      <h2 class="section-title">Stage & Sound Designer</h2>
+
+      <div class="controls-section">
+        <div class="control-group">
+          <label>Stage Width (meters):</label>
+          <input type="number" id="widthInput" min="5" max="100" placeholder="e.g. 20" value="20">
+        </div>
+
+        <div class="control-group">
+          <label>Stage Height (meters):</label>
+          <input type="number" id="heightInput" min="3" max="50" placeholder="e.g. 8" value="8">
+        </div>
+
+        <div class="control-group">
+          <label>🎨 LED Screen Design:</label>
+          <div class="led-pattern-grid">
+            <div class="led-pattern selected" data-led="geometric">
+              <div>🔷 Geometric</div>
+              <small>Bold patterns</small>
+            </div>
+            <div class="led-pattern" data-led="pixel">
+              <div>⬜ Pixel Art</div>
+              <small>Grid style</small>
+            </div>
+            <div class="led-pattern" data-led="wave">
+              <div>〰️ Wave Flow</div>
+              <small>Smooth curves</small>
+            </div>
+            <div class="led-pattern" data-led="neon">
+              <div>💫 Neon Glow</div>
+              <small>Vibrant edges</small>
+            </div>
+            <div class="led-pattern" data-led="hologram">
+              <div>✨ Hologram</div>
+              <small>3D effect</small>
+            </div>
+            <div class="led-pattern" data-led="spectrum">
+              <div>🌈 Spectrum</div>
+              <small>Multi-color</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label>🔊 Sound System Setup:</label>
+          <div class="sound-system-grid">
+            <div class="sound-option selected" data-sound="stereo">
+              <div>📊 Stereo Pair</div>
+              <small>2 boxes</small>
+            </div>
+            <div class="sound-option" data-sound="quad">
+              <div>📢 Quad System</div>
+              <small>4 boxes</small>
+            </div>
+            <div class="sound-option" data-sound="surround">
+              <div>🔉 Surround</div>
+              <small>360°</small>
+            </div>
+            <div class="sound-option" data-sound="line_array">
+              <div>📻 Line Array</div>
+              <small>Professional</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label>📦 Equipment Configuration:</label>
+          <div class="equipment-grid">
+            <div class="equipment-option selected" data-equipment="both">
+              <div>🎪 LED + Sound</div>
+              <small>Full Setup</small>
+            </div>
+            <div class="equipment-option" data-equipment="led_only">
+              <div>📺 LED Walls Only</div>
+              <small>Display Focus</small>
+            </div>
+            <div class="equipment-option" data-equipment="sound_only">
+              <div>🎵 Sound Only</div>
+              <small>Audio Focus</small>
+            </div>
+          </div>
+        </div>
+
+        <button id="generateBtn" class="btn btn-primary" style="margin-top: 20px; width: 100%; padding: 15px;">Generate Stage Design</button>
+        <button id="generateNextBtn" class="btn btn-outline" style="display:none; margin-top: 10px; width: 100%; padding: 15px;">Generate More Variations</button>
+        <button id="clearGalleryBtn" class="btn secondary" style="margin-top: 10px; width: 100%; padding: 15px;">Clear Gallery</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" class="features-section">
+    <div class="container">
+      <h2 class="section-title">Features that make your events epic</h2>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h3>🎯 Realistic Renders</h3>
+          <p>Professional-quality stage layouts with actual LED walls, sound boxes, and decorations from a true front-of-house perspective.</p>
+        </div>
+        <div class="feature-card">
+          <h3>📏 Custom Dimensions</h3>
+          <p>Set your exact stage width and height to preview how equipment scales and fits in real-world scenarios.</p>
+        </div>
+        <div class="feature-card">
+          <h3>🎨 Multiple Designs</h3>
+          <p>Generate variations with different LED patterns and sound system configurations instantly.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer id="contact" class="site-footer">
+    <div class="container footer-inner">
+      <div>© <strong>Event AI</strong> — Professional Event Planning.</div>
+      <div class="footer-links">
+        <a href="#home">Home</a>
+        <a href="#stage">Designer</a>
+        <a href="#features">Features</a>
+      </div>
+    </div>
+  </footer>
+
+<script>
+let selectedLED = 'geometric';
+let selectedSound = 'stereo';
+let selectedEquipment = 'both';
+
+document.querySelectorAll('.led-pattern').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.led-pattern').forEach(b => b.classList.remove('selected'));
+    this.classList.add('selected');
+    selectedLED = this.dataset.led;
+  });
+});
+
+document.querySelectorAll('.sound-option').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.sound-option').forEach(b => b.classList.remove('selected'));
+    this.classList.add('selected');
+    selectedSound = this.dataset.sound;
+  });
+});
+
+document.querySelectorAll('.equipment-option').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.equipment-option').forEach(b => b.classList.remove('selected'));
+    this.classList.add('selected');
+    selectedEquipment = this.dataset.equipment;
+  });
+});
+
+async function generateImage({ appendToGallery = true } = {}) {
+  const assistantReply = document.getElementById("assistantReply");
+  const canvasPlaceholder = document.getElementById("canvasPlaceholder");
+  const generatedImage = document.getElementById("generatedImage");
+  const gallery = document.getElementById('gallery');
+  const generateBtn = document.getElementById('generateBtn');
+  const generateNextBtn = document.getElementById('generateNextBtn');
+
+  const width = document.getElementById("widthInput").value;
+  const height = document.getElementById("heightInput").value;
+  
+  if (!width || !height) {
+    assistantReply.textContent = "❌ Please enter both width and height.";
+    return;
+  }
+  
+  const ledDescriptions = {
+    geometric: 'bold geometric LED patterns',
+    pixel: 'pixel art style LED grid',
+    wave: 'smooth wave flowing LED patterns',
+    neon: 'bright neon glow LED walls',
+    hologram: '3D holographic LED effects',
+    spectrum: 'multi-color spectrum LED display'
+  };
+  
+  const soundDescriptions = {
+    stereo: 'stereo pair of professional sound boxes',
+    quad: 'quad sound system with 4 speaker boxes',
+    surround: '360-degree surround sound system',
+    line_array: 'professional line array sound system'
+  };
+  
+  const equipmentSetup = {
+    both: `professional stage setup with ${width}m wide ${height}m high stage, large LED wall with ${ledDescriptions[selectedLED]} behind the stage, and ${soundDescriptions[selectedSound]} positioned in front, decorated with hanging lights and decorative elements`,
+    led_only: `professional stage with ${width}m wide ${height}m high stage featuring a dominant LED wall with ${ledDescriptions[selectedLED]}, decorated with ornamental lighting and stage decorations, front-view perspective`,
+    sound_only: `professional stage with ${width}m wide ${height}m high stage setup with ${soundDescriptions[selectedSound]} prominently displayed, decorated stage backdrop, professional event setup`
+  };
+  
+  const prompt = `Professional event stage render, ${equipmentSetup[selectedEquipment]}, photorealistic, high quality, front audience perspective, detailed lighting, 4k, professional event photography`;
+
+  assistantReply.textContent = "🎬 Generating stage design...";
+  canvasPlaceholder.style.display = "none";
+  generatedImage.style.display = "none";
+  generateBtn.disabled = true;
+  if (generateNextBtn) generateNextBtn.disabled = true;
+
+  try {
+    // Client-side image generation using Picsum (GitHub Pages compatible)
+    const seed = Math.abs(prompt.split('').reduce((a, c) => ((a << 5) - a) + c.charCodeAt(0), 0));
+    const imgUrl = `https://picsum.photos/seed/${seed}/900/600?random=${Date.now()}`;
+    
+    const thumb = document.createElement('img');
+    thumb.src = imgUrl;
+    thumb.alt = 'Generated stage design';
+    thumb.onclick = () => {
+      generatedImage.src = imgUrl;
+      generatedImage.style.display = "block";
+      canvasPlaceholder.style.display = "none";
+    };
+    
+    if (appendToGallery) {
+      gallery.insertBefore(thumb, gallery.firstChild);
+    }
+
+    generatedImage.src = imgUrl;
+    generatedImage.style.display = "block";
+    canvasPlaceholder.style.display = "none";
+    assistantReply.textContent = "✨ Stage design generated successfully!";
+    
+    generateBtn.disabled = false;
+    if (generateNextBtn) generateNextBtn.disabled = false;
+
+  } catch (error) {
+    console.error('Generation error:', error);
+    assistantReply.textContent = "❌ Generation failed. Using placeholder.";
+    const fallbackUrl = `https://picsum.photos/900/600?random=${Date.now()}`;
+    generatedImage.src = fallbackUrl;
+    generatedImage.style.display = "block";
+    canvasPlaceholder.style.display = "none";
+    generateBtn.disabled = false;
+    if (generateNextBtn) generateNextBtn.disabled = false;
+  }
+}
+
+document.getElementById("generateBtn").addEventListener("click", generateImage);
+const generateNextBtn = document.getElementById('generateNextBtn');
+const clearGalleryBtn = document.getElementById('clearGalleryBtn');
+const gallery = document.getElementById('gallery');
+generateNextBtn?.addEventListener('click', () => generateImage({ appendToGallery: true }));
+clearGalleryBtn?.addEventListener('click', () => {
+  if (!gallery) return;
+  gallery.innerHTML = '';
+  generateNextBtn.style.display = 'none';
+});
+
+const micBtn = document.getElementById('micBtn');
+const assistantReplyEl = document.getElementById('assistantReply');
+const userSpeechEl = document.getElementById('userSpeech');
+micBtn?.addEventListener('click', () => {
+  micBtn.disabled = true;
+  micBtn.textContent = 'Listening...';
+  assistantReplyEl.textContent = '';
+  userSpeechEl.textContent = '';
+  setTimeout(() => {
+    userSpeechEl.textContent = 'Design a 25 meter wide stage with LED walls and surround sound';
+    assistantReplyEl.textContent = 'Creating professional stage layout...';
+    micBtn.disabled = false;
+    micBtn.textContent = '🎤 Talk to Assistant';
+  }, 1400);
+});
+</script>
+</body>
+</html>

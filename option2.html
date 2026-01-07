@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Services - Loans & Government Schemes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .services-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #fff;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 36px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .section h2 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 28px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .loans-grid, .schemes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .loan-card, .scheme-card {
+            background: #fff;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #667eea;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .loan-card:hover, .scheme-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .loan-card h3, .scheme-card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .loan-card p, .scheme-card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .loan-card .apply-btn, .scheme-card .apply-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .loan-card .apply-btn:hover, .scheme-card .apply-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #667eea;
+        }
+
+        .modal h2 {
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .modal .details {
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .modal .highlight {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .modal .requirements {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .modal .benefits {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .apply-form {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .apply-form h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: #fff;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .back-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+        }
+
+        .back-button:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .services-container {
+                padding: 10px;
+            }
+            h1 {
+                font-size: 28px;
+            }
+            .section {
+                padding: 20px;
+            }
+            .loans-grid, .schemes-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="services-container">
+        <a href="options.html" class="back-button">← Back to Options</a>
+        <h1>Financial Services</h1>
+
+        <div class="section">
+            <h2>Available Loans</h2>
+            <div class="loans-grid">
+                <div class="loan-card">
+                    <h3>Home Loan</h3>
+                    <p>Finance your dream home with competitive interest rates and flexible repayment options. Perfect for first-time home buyers and those looking to upgrade.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> Salaried individuals with minimum income of ₹25,000/month
+                    </div>
+                    <button class="apply-btn" onclick="openLoanModal('Home Loan')">Apply Now</button>
+                </div>
+
+                <div class="loan-card">
+                    <h3>Personal Loan</h3>
+                    <p>Quick financing for personal needs like medical emergencies, education, or debt consolidation. No collateral required with fast approval process.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> Age 21-60 years with stable income and good credit score
+                    </div>
+                    <button class="apply-btn" onclick="openLoanModal('Personal Loan')">Apply Now</button>
+                </div>
+
+                <div class="loan-card">
+                    <h3>Business Loan</h3>
+                    <p>Capital for business expansion, working capital, or starting a new venture. Flexible terms designed for entrepreneurs and business owners.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> Business owners with minimum 2 years experience and turnover ₹5 lakhs+
+                    </div>
+                    <button class="apply-btn" onclick="openLoanModal('Business Loan')">Apply Now</button>
+                </div>
+
+                <div class="loan-card">
+                    <h3>Education Loan</h3>
+                    <p>Fund your higher education abroad or in India. Covers tuition fees, accommodation, and other educational expenses with easy repayment options.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> Students admitted to recognized educational institutions
+                    </div>
+                    <button class="apply-btn" onclick="openLoanModal('Education Loan')">Apply Now</button>
+                </div>
+
+                <div class="loan-card">
+                    <h3>Car Loan</h3>
+                    <p>Drive home your dream car with affordable financing options. Competitive rates with flexible tenure up to 7 years.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> Minimum age 21 years with steady income and valid driving license
+                    </div>
+                    <button class="apply-btn" onclick="openLoanModal('Car Loan')">Apply Now</button>
+                </div>
+
+                <div class="loan-card">
+                    <h3>Gold Loan</h3>
+                    <p>Instant cash against your gold jewelry. Quick approval with competitive interest rates and flexible repayment terms.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> Gold owners aged 18+ with valid ID proof
+                    </div>
+                    <button class="apply-btn" onclick="openLoanModal('Gold Loan')">Apply Now</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Government Schemes & Services</h2>
+            <div class="schemes-grid">
+                <div class="scheme-card">
+                    <h3>PAN Card Services</h3>
+                    <p>Apply for new PAN card, corrections, duplicate PAN, and e-PAN. Online application with fast processing and doorstep delivery.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> Indian citizens and entities requiring PAN for tax purposes
+                    </div>
+                    <button class="apply-btn" onclick="openSchemeModal('PAN Card Services')">Apply Now</button>
+                </div>
+
+                <div class="scheme-card">
+                    <h3>Aadhaar Card Services</h3>
+                    <p>Enroll for new Aadhaar, update demographic details, address changes, and biometric updates. Essential identity document.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> Residents of India, including newborns and foreigners
+                    </div>
+                    <button class="apply-btn" onclick="openSchemeModal('Aadhaar Card Services')">Apply Now</button>
+                </div>
+
+                <div class="scheme-card">
+                    <h3>Pradhan Mantri Jan Dhan Yojana</h3>
+                    <p>Financial inclusion scheme providing zero-balance savings accounts, RuPay debit cards, and accident insurance coverage up to ₹1 lakh.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> Indian citizens above 10 years of age
+                    </div>
+                    <button class="apply-btn" onclick="openSchemeModal('Pradhan Mantri Jan Dhan Yojana')">Apply Now</button>
+                </div>
+
+                <div class="scheme-card">
+                    <h3>Pradhan Mantri Mudra Yojana</h3>
+                    <p>Loan scheme for micro and small enterprises. Provides loans up to ₹10 lakhs for business activities without collateral.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> Small business owners and entrepreneurs
+                    </div>
+                    <button class="apply-btn" onclick="openSchemeModal('Pradhan Mantri Mudra Yojana')">Apply Now</button>
+                </div>
+
+                <div class="scheme-card">
+                    <h3>Pradhan Mantri Awas Yojana</h3>
+                    <p>Affordable housing scheme providing financial assistance for construction/ purchase of houses for economically weaker sections.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> Annual income below ₹6 lakhs for urban areas
+                    </div>
+                    <button class="apply-btn" onclick="openSchemeModal('Pradhan Mantri Awas Yojana')">Apply Now</button>
+                </div>
+
+                <div class="scheme-card">
+                    <h3>Atal Pension Yojana</h3>
+                    <p>Guaranteed pension scheme for unorganized sector workers. Provides monthly pension between ₹1,000 to ₹5,000 after retirement.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> Age 18-40 years with bank account
+                    </div>
+                    <button class="apply-btn" onclick="openSchemeModal('Atal Pension Yojana')">Apply Now</button>
+                </div>
+
+                <div class="scheme-card">
+                    <h3>Pradhan Mantri Fasal Bima Yojana</h3>
+                    <p>Crop insurance scheme protecting farmers against crop loss due to natural calamities, pests, and diseases.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> All farmers growing notified crops in notified areas
+                    </div>
+                    <button class="apply-btn" onclick="openSchemeModal('Pradhan Mantri Fasal Bima Yojana')">Apply Now</button>
+                </div>
+
+                <div class="scheme-card">
+                    <h3>Stand Up India Scheme</h3>
+                    <p>Loan scheme for SC/ST and women entrepreneurs. Provides loans between ₹10 lakhs to ₹1 crore for setting up greenfield enterprises.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> SC/ST or women entrepreneurs above 18 years
+                    </div>
+                    <button class="apply-btn" onclick="openSchemeModal('Stand Up India Scheme')">Apply Now</button>
+                </div>
+
+                <div class="scheme-card">
+                    <h3>Pradhan Mantri Kisan Samman Nidhi</h3>
+                    <p>Direct income support scheme for farmers providing ₹6,000 per year in three equal installments to farmer families.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> Small and marginal farmers with landholding up to 2 hectares
+                    </div>
+                    <button class="apply-btn" onclick="openSchemeModal('Pradhan Mantri Kisan Samman Nidhi')">Apply Now</button>
+                </div>
+
+                <div class="scheme-card">
+                    <h3>Ayushman Bharat Yojana</h3>
+                    <p>Health insurance scheme providing coverage up to ₹5 lakhs per family per year for secondary and tertiary care hospitalization.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> Families identified in SECC database and other identified families
+                    </div>
+                    <button class="apply-btn" onclick="openSchemeModal('Ayushman Bharat Yojana')">Apply Now</button>
+                </div>
+
+                <div class="scheme-card">
+                    <h3>Pradhan Mantri Ujjwala Yojana</h3>
+                    <p>LPG gas connection scheme providing free LPG connections to women from BPL households to reduce health hazards from cooking fuels.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> Women above 18 years from BPL households
+                    </div>
+                </div>
+
+                <div class="scheme-card">
+                    <h3>Swachh Bharat Mission</h3>
+                    <p>Clean India initiative focusing on sanitation, waste management, and behavioral change regarding healthy sanitation practices.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> All Indian citizens, with incentives for rural households
+                    </div>
+                    <button class="apply-btn" onclick="openSchemeModal('Swachh Bharat Mission')">Apply Now</button>
+                </div>
+
+                <div class="scheme-card">
+                    <h3>Digital India Programme</h3>
+                    <p>Programme to transform India into a digitally empowered society and knowledge economy through technology initiatives.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> All Indian citizens and businesses
+                    </div>
+                    <button class="apply-btn" onclick="openSchemeModal('Digital India Programme')">Apply Now</button>
+                </div>
+
+                <div class="scheme-card">
+                    <h3>Make in India Initiative</h3>
+                    <p>Flagship initiative to transform India into a global manufacturing hub by encouraging companies to manufacture in India.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> Domestic and foreign companies interested in manufacturing
+                    </div>
+                    <button class="apply-btn" onclick="openSchemeModal('Make in India Initiative')">Apply Now</button>
+                </div>
+
+                <div class="scheme-card">
+                    <h3>GST Registration & Services</h3>
+                    <p>Goods and Services Tax registration, amendments, returns filing, and compliance services for businesses.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> Businesses with turnover above threshold limits
+                    </div>
+                    <button class="apply-btn" onclick="openSchemeModal('GST Registration & Services')">Apply Now</button>
+                </div>
+
+                <div class="scheme-card">
+                    <h3>Startup India Initiative</h3>
+                    <p>Programme to promote entrepreneurship by creating a conducive ecosystem for startups to grow and generate employment.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> Innovative startups with scalable business models
+                    </div>
+                    <button class="apply-btn" onclick="openSchemeModal('Startup India Initiative')">Apply Now</button>
+                </div>
+
+                <div class="scheme-card">
+                    <h3>Skill India Mission</h3>
+                    <p>National skill development mission to train youth in industry-relevant skills and provide employment opportunities.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> Youth aged 15-35 years across India
+                    </div>
+                    <button class="apply-btn" onclick="openSchemeModal('Skill India Mission')">Apply Now</button>
+                </div>
+
+                <div class="scheme-card">
+                    <h3>Pradhan Mantri Kaushal Vikas Yojana</h3>
+                    <p>Skill development scheme providing short-term training programs to youth for employment in various sectors.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> Unemployed youth aged 18-35 years
+                    </div>
+                </div>
+
+                <div class="scheme-card">
+                    <h3>MGNREGA (Mahatma Gandhi NREGA)</h3>
+                    <p>Employment guarantee scheme providing 100 days of guaranteed wage employment to rural households.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> Rural households willing to do unskilled manual work
+                    </div>
+                    <button class="apply-btn" onclick="openSchemeModal('MGNREGA (Mahatma Gandhi NREGA)')">Apply Now</button>
+                </div>
+
+                <div class="scheme-card">
+                    <h3>Pradhan Mantri Matru Vandana Yojana</h3>
+                    <p>Maternity benefit scheme providing ₹5,000 to pregnant women and lactating mothers for better nutrition.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> Pregnant women above 19 years, first living child
+                    </div>
+                    <button class="apply-btn" onclick="openSchemeModal('Pradhan Mantri Matru Vandana Yojana')">Apply Now</button>
+                </div>
+
+                <div class="scheme-card">
+                    <h3>National Pension Scheme (NPS)</h3>
+                    <p>Voluntary retirement savings scheme regulated by PFRDA for long-term savings and retirement income.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> Indian citizens aged 18-65 years
+                    </div>
+                    <button class="apply-btn" onclick="openSchemeModal('National Pension Scheme (NPS)')">Apply Now</button>
+                </div>
+
+                <div class="scheme-card">
+                    <h3>Public Provident Fund (PPF)</h3>
+                    <p>Long-term savings scheme providing tax benefits and guaranteed returns for retirement planning.</p>
+                    <div class="eligibility">
+                        <strong>Eligibility:</strong> Indian residents, HUFs, and associations
+                    </div>
+                    <button class="apply-btn" onclick="openSchemeModal('Public Provident Fund (PPF)')">Apply Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for detailed information and application -->
+    <div id="schemeModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Scheme Details</h2>
+            <div class="details" id="modalContent">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+            <div class="apply-form" id="applicationForm" style="display: none;">
+                <h3>Apply for this Service</h3>
+                <form id="serviceApplicationForm">
+                    <div class="form-group">
+                        <label for="applicantName">Full Name:</label>
+                        <input type="text" id="applicantName" name="applicantName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="applicantEmail">Email:</label>
+                        <input type="email" id="applicantEmail" name="applicantEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="applicantPhone">Phone Number:</label>
+                        <input type="tel" id="applicantPhone" name="applicantPhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="applicantAddress">Address:</label>
+                        <textarea id="applicantAddress" name="applicantAddress" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="applicationType">Application Type:</label>
+                        <select id="applicationType" name="applicationType" required>
+                            <option value="">Select Type</option>
+                            <option value="new">New Application</option>
+                            <option value="renewal">Renewal</option>
+                            <option value="correction">Correction/Update</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="additionalInfo">Additional Information:</label>
+                        <textarea id="additionalInfo" name="additionalInfo" rows="3" placeholder="Any additional details..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Submit Application</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Scheme details database
+        const schemeDetails = {
+            // Loans
+            "Home Loan": {
+                description: "Home loans are designed to help you purchase or construct your dream home with competitive interest rates and flexible repayment options.",
+                benefits: "• Interest rates starting from 6.5% p.a.\n• Loan amount up to ₹5 crores\n• Repayment tenure up to 30 years\n• Tax benefits under Section 80C and 24(b)",
+                requirements: "• Age: 21-65 years\n• Minimum monthly income: ₹25,000\n• Credit score: 650+\n• Employment stability: 2+ years",
+                process: "1. Online application\n2. Document verification\n3. Property valuation\n4. Loan sanction\n5. Disbursement"
+            },
+            "Personal Loan": {
+                description: "Personal loans provide quick financing for personal needs without requiring collateral or detailed documentation.",
+                benefits: "• Instant approval\n• No collateral required\n• Flexible usage\n• Quick disbursal within 24 hours",
+                requirements: "• Age: 21-60 years\n• Monthly income: ₹15,000+\n• Credit score: 650+\n• Employment: Salaried/Self-employed",
+                process: "1. Online application\n2. Basic document submission\n3. Credit check\n4. Instant approval\n5. Fund transfer"
+            },
+            "Business Loan": {
+                description: "Business loans help entrepreneurs expand their operations, purchase equipment, or manage working capital requirements.",
+                benefits: "• Higher loan amounts\n• Flexible repayment\n• Business growth support\n• Tax benefits",
+                requirements: "• Business vintage: 2+ years\n• Annual turnover: ₹5 lakhs+\n• Profitability proof\n• Business plan",
+                process: "1. Business profile assessment\n2. Financial statement review\n3. Collateral evaluation\n4. Loan sanction\n5. Disbursement"
+            },
+            "Education Loan": {
+                description: "Education loans cover tuition fees, accommodation, and other educational expenses for higher studies in India and abroad.",
+                benefits: "• Covers up to 100% of expenses\n• Moratorium period during study\n• Easy repayment options\n• Tax benefits",
+                requirements: "• Admission letter from institution\n• Academic records\n• Income proof of co-applicant\n• Collateral for higher amounts",
+                process: "1. Admission confirmation\n2. Loan application\n3. Document verification\n4. Loan disbursement\n5. Repayment after course completion"
+            },
+            "Car Loan": {
+                description: "Car loans help you purchase your dream vehicle with affordable EMI options and competitive interest rates.",
+                benefits: "• 100% financing available\n• Flexible tenure up to 7 years\n• Quick approval\n• Doorstep service",
+                requirements: "• Age: 21+ years\n• Monthly income: ₹20,000+\n• Valid driving license\n• Residence proof",
+                process: "1. Vehicle selection\n2. Loan application\n3. Document submission\n4. Vehicle verification\n5. Loan disbursement"
+            },
+            "Gold Loan": {
+                description: "Gold loans provide instant cash against your gold jewelry with competitive interest rates and flexible repayment terms.",
+                benefits: "• Instant cash\n• Low interest rates\n• Flexible tenure\n• No hidden charges\n• Gold remains secure",
+                requirements: "• 18+ years age\n• Valid ID proof\n• Gold jewelry ownership\n• Purity certificate preferred",
+                process: "1. Gold assessment\n2. Loan amount calculation\n3. Document verification\n4. Loan disbursement\n5. Gold storage"
+            },
+
+            // Government Schemes
+            "PAN Card Services": {
+                description: "PAN card is essential for tax purposes. We help with new PAN applications, corrections, duplicate PAN, and e-PAN services.",
+                benefits: "• Fast processing (15-20 days)\n• Online application facility\n• Doorstep delivery\n• 24/7 helpline support",
+                requirements: "• Valid ID proof\n• Address proof\n• Date of birth proof\n• Recent photograph",
+                process: "1. Online application\n2. Document upload\n3. Payment\n4. Processing\n5. Card delivery"
+            },
+            "Aadhaar Card Services": {
+                description: "Aadhaar is your unique identity number. We assist with enrollment, updates, corrections, and biometric changes.",
+                benefits: "• Free service\n• Digital identity\n• Link with bank accounts\n• Access to government services",
+                requirements: "• Indian citizenship\n• Basic demographic details\n• Biometric information\n• Mobile number",
+                process: "1. Visit enrollment center\n2. Biometric capture\n3. Document verification\n4. Aadhaar generation\n5. Card collection"
+            },
+            "Pradhan Mantri Jan Dhan Yojana": {
+                description: "Financial inclusion scheme providing banking services to unbanked citizens with zero-balance accounts.",
+                benefits: "• Zero balance account\n• RuPay debit card\n• ₹1 lakh accident insurance\n• ₹30,000 life insurance\n• Direct benefit transfers",
+                requirements: "• Indian citizen\n• Age: 10+ years\n• Valid ID proof\n• Address proof",
+                process: "1. Visit bank branch\n2. Account opening\n3. Document submission\n4. Debit card issuance\n5. Insurance coverage activation"
+            },
+            "Pradhan Mantri Mudra Yojana": {
+                description: "Loan scheme for micro enterprises providing loans up to ₹10 lakhs without collateral for business activities.",
+                benefits: "• Loans up to ₹10 lakhs\n• No collateral required\n• Low interest rates\n• Flexible repayment\n• Business development support",
+                requirements: "• Indian citizen\n• Age: 18+ years\n• Business plan\n• Income proof\n• Identity proof",
+                process: "1. Bank visit\n2. Application submission\n3. Business plan review\n4. Loan sanction\n5. Fund disbursement"
+            },
+            "Pradhan Mantri Awas Yojana": {
+                description: "Affordable housing scheme providing financial assistance for home construction/purchase for economically weaker sections.",
+                benefits: "• Interest subsidy up to ₹2.67 lakhs\n• Credit linked subsidy\n• Affordable housing\n• Quality construction",
+                requirements: "• Annual income below ₹6 lakhs (urban)\n• No pucca house ownership\n• Valid ID proof\n• Address proof",
+                process: "1. PMAY registration\n2. Beneficiary selection\n3. Loan application\n4. Subsidy calculation\n5. Construction/purchase support"
+            },
+            "Atal Pension Yojana": {
+                description: "Pension scheme for unorganized sector workers providing guaranteed monthly pension after retirement.",
+                benefits: "• Guaranteed pension ₹1,000-₹5,000/month\n• Government contribution\n• Flexible contribution amounts\n• Tax benefits",
+                requirements: "• Age: 18-40 years\n• Bank account\n• Aadhaar card\n• Mobile number",
+                process: "1. Bank account opening\n2. APY registration\n3. Contribution setup\n4. Monthly deductions\n5. Pension activation at 60"
+            },
+            "Pradhan Mantri Fasal Bima Yojana": {
+                description: "Crop insurance scheme protecting farmers against crop loss due to natural calamities, pests, and diseases.",
+                benefits: "• Comprehensive risk coverage\n• Low premium rates\n• Quick claim settlement\n• Prevents farmer distress",
+                requirements: "• Land ownership documents\n• Crop sowing details\n• Bank account\n• Aadhaar card",
+                process: "1. Seasonal enrollment\n2. Premium payment\n3. Crop monitoring\n4. Loss assessment\n5. Claim disbursement"
+            },
+            "Stand Up India Scheme": {
+                description: "Loan scheme for SC/ST and women entrepreneurs providing loans between ₹10 lakhs to ₹1 crore for greenfield enterprises.",
+                benefits: "• Loans ₹10 lakhs to ₹1 crore\n• Composite loan facility\n• Interest subsidy\n• Entrepreneurship development",
+                requirements: "• SC/ST or women entrepreneur\n• Age: 18+ years\n• Project report\n• Business plan\n• Collateral for higher amounts",
+                process: "1. Project identification\n2. Application submission\n3. Project evaluation\n4. Loan sanction\n5. Business establishment support"
+            },
+            "Pradhan Mantri Kisan Samman Nidhi": {
+                description: "Direct income support scheme providing ₹6,000 per year to farmer families in three equal installments.",
+                benefits: "• ₹6,000 annual income support\n• Direct bank transfer\n• No intermediaries\n• Financial security for farmers",
+                requirements: "• Landholding up to 2 hectares\n• Ownership documents\n• Aadhaar linked bank account\n• Farmer identification",
+                process: "1. Self-declaration\n2. Database verification\n3. Beneficiary selection\n4. Bank account seeding\n5. Direct benefit transfer"
+            },
+            "Ayushman Bharat Yojana": {
+                description: "Health insurance scheme providing coverage up to ₹5 lakhs per family for secondary and tertiary care hospitalization.",
+                benefits: "• ₹5 lakhs coverage per family\n• 1,350+ medical packages\n• Cashless treatment\n• No deductibles\n• Pre-existing disease coverage",
+                requirements: "• SECC database family\n• Deprivation criteria\n• Valid ID proof\n• Family details",
+                process: "1. Eligibility check\n2. e-card generation\n3. Hospital network\n4. Cashless treatment\n5. Claim settlement"
+            },
+            "Pradhan Mantri Ujjwala Yojana": {
+                description: "LPG gas connection scheme providing free connections to BPL households to reduce health hazards from cooking fuels.",
+                benefits: "• Free LPG connection\n• First refill at subsidized rate\n• Safety training\n• Health benefits\n• Financial savings",
+                requirements: "• BPL household\n• Woman above 18 years\n• Valid ID proof\n• Address proof",
+                process: "1. Beneficiary identification\n2. Application submission\n3. Connection installation\n4. Safety training\n5. Refill distribution"
+            },
+            "Swachh Bharat Mission": {
+                description: "Clean India initiative focusing on sanitation, waste management, and behavioral change for healthy sanitation practices.",
+                benefits: "• Improved health outcomes\n• Environmental protection\n• Government incentives\n• Community development",
+                requirements: "• Indian citizen\n• Local resident\n• Willingness to participate\n• Follow guidelines",
+                process: "1. Awareness programs\n2. Toilet construction\n3. Waste management\n4. Behavioral change\n5. Monitoring and evaluation"
+            },
+            "Digital India Programme": {
+                description: "Programme to transform India into a digitally empowered society through technology initiatives and digital infrastructure.",
+                benefits: "• Digital literacy\n• Online services access\n• Technology adoption\n• Economic opportunities",
+                requirements: "• Indian citizen\n• Basic education\n• Access to digital devices\n• Internet connectivity",
+                process: "1. Digital literacy training\n2. Service adoption\n3. Technology integration\n4. Skill development\n5. Continuous learning"
+            },
+            "Make in India Initiative": {
+                description: "Flagship initiative to transform India into a global manufacturing hub by encouraging domestic and foreign companies.",
+                benefits: "• Investment opportunities\n• Job creation\n• Technology transfer\n• Economic growth\n• Global competitiveness",
+                requirements: "• Business entity\n• Manufacturing project\n• Investment capacity\n• Regulatory compliance",
+                process: "1. Project proposal\n2. Investment approval\n3. Land allocation\n4. Infrastructure setup\n5. Manufacturing operations"
+            },
+            "GST Registration & Services": {
+                description: "Goods and Services Tax registration, amendments, returns filing, and compliance services for businesses.",
+                benefits: "• Simplified tax system\n• Input tax credit\n• Online compliance\n• Professional assistance\n• Penalty avoidance",
+                requirements: "• Business registration\n• Turnover above threshold\n• Valid documents\n• Business address",
+                process: "1. Eligibility check\n2. Application submission\n3. Document verification\n4. GSTIN generation\n5. Compliance setup"
+            },
+            "Startup India Initiative": {
+                description: "Programme to promote entrepreneurship by creating a conducive ecosystem for startups to grow and generate employment.",
+                benefits: "• Tax exemptions\n• Funding support\n• Incubation facilities\n• Mentorship programs\n• Network access",
+                requirements: "• Innovative business idea\n• Scalable business model\n• Technology-driven solution\n• Team with technical expertise",
+                process: "1. Idea validation\n2. Startup registration\n3. Incubation support\n4. Funding assistance\n5. Market expansion"
+            },
+            "Skill India Mission": {
+                description: "National skill development mission to train youth in industry-relevant skills and provide employment opportunities.",
+                benefits: "• Industry-relevant training\n• Employment opportunities\n• Skill certification\n• Career advancement\n• Higher earning potential",
+                requirements: "• Age: 15-35 years\n• Basic education\n• Willingness to learn\n• Physical fitness",
+                process: "1. Skill assessment\n2. Training enrollment\n3. Course completion\n4. Certification\n5. Job placement"
+            },
+            "Pradhan Mantri Kaushal Vikas Yojana": {
+                description: "Skill development scheme providing short-term training programs to youth for employment in various sectors.",
+                benefits: "• Short-term training\n• Industry partnership\n• Placement assistance\n• Skill certification\n• Financial support",
+                requirements: "• Age: 18-35 years\n• Unemployed youth\n• Basic education\n• Willingness to relocate",
+                process: "1. Registration\n2. Training selection\n3. Course completion\n4. Assessment\n5. Job placement"
+            },
+            "MGNREGA (Mahatma Gandhi NREGA)": {
+                description: "Employment guarantee scheme providing 100 days of guaranteed wage employment to rural households.",
+                benefits: "• 100 days employment guarantee\n• Minimum wage payment\n• Skill development\n• Asset creation\n• Rural development",
+                requirements: "• Rural household\n• Willing to do manual work\n• Age: 18+ years\n• Job card holder",
+                process: "1. Job card application\n2. Registration\n3. Work demand\n4. Work allocation\n5. Wage payment"
+            },
+            "Pradhan Mantri Matru Vandana Yojana": {
+                description: "Maternity benefit scheme providing ₹5,000 to pregnant women and lactating mothers for better nutrition.",
+                benefits: "• ₹5,000 financial assistance\n• Nutritional support\n• Health check-ups\n• Institutional delivery promotion",
+                requirements: "• Pregnant woman above 19 years\n• First living child\n• Early registration\n• Aadhaar linked",
+                process: "1. Early registration\n2. Health check-ups\n3. Institutional delivery\n4. First installment\n5. Second installment"
+            },
+            "National Pension Scheme (NPS)": {
+                description: "Voluntary retirement savings scheme regulated by PFRDA for long-term savings and retirement income.",
+                benefits: "• Market-linked returns\n• Tax benefits\n• Flexible contributions\n• Portable account\n• Government co-contribution",
+                requirements: "• Age: 18-65 years\n• Indian citizen\n• Bank account\n• PAN card",
+                process: "1. PRAN generation\n2. Contribution setup\n3. Investment choice\n4. Regular contributions\n5. Retirement withdrawal"
+            },
+            "Public Provident Fund (PPF)": {
+                description: "Long-term savings scheme providing tax benefits and guaranteed returns for retirement planning.",
+                benefits: "• Tax-free returns\n• Guaranteed returns\n• Loan facility\n• Long-term savings\n• Safety of principal",
+                requirements: "• Indian resident\n• Age: 18+ years\n• PAN card\n• Bank account",
+                process: "1. PPF account opening\n2. Initial deposit\n3. Annual contributions\n4. Interest accrual\n5. Maturity benefits"
+            }
+        };
+
+        // Modal functions
+        function openLoanModal(loanType) {
+            const details = schemeDetails[loanType];
+            if (details) {
+                document.getElementById('modalTitle').textContent = loanType;
+                document.getElementById('modalContent').innerHTML = `
+                    <div class="highlight">
+                        <strong>Description:</strong><br>
+                        ${details.description}
+                    </div>
+                    <div class="benefits">
+                        <strong>Benefits:</strong><br>
+                        <pre>${details.benefits}</pre>
+                    </div>
+                    <div class="requirements">
+                        <strong>Requirements:</strong><br>
+                        <pre>${details.requirements}</pre>
+                    </div>
+                    <div class="highlight">
+                        <strong>Application Process:</strong><br>
+                        <pre>${details.process}</pre>
+                    </div>
+                `;
+                document.getElementById('applicationForm').style.display = 'block';
+                document.getElementById('schemeModal').style.display = 'block';
+            }
+        }
+
+        function openSchemeModal(schemeType) {
+            const details = schemeDetails[schemeType];
+            if (details) {
+                document.getElementById('modalTitle').textContent = schemeType;
+                document.getElementById('modalContent').innerHTML = `
+                    <div class="highlight">
+                        <strong>Description:</strong><br>
+                        ${details.description}
+                    </div>
+                    <div class="benefits">
+                        <strong>Benefits:</strong><br>
+                        <pre>${details.benefits}</pre>
+                    </div>
+                    <div class="requirements">
+                        <strong>Requirements:</strong><br>
+                        <pre>${details.requirements}</pre>
+                    </div>
+                    <div class="highlight">
+                        <strong>Application Process:</strong><br>
+                        <pre>${details.process}</pre>
+                    </div>
+                `;
+                document.getElementById('applicationForm').style.display = 'block';
+                document.getElementById('schemeModal').style.display = 'block';
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('schemeModal').style.display = 'none';
+            document.getElementById('applicationForm').style.display = 'none';
+            document.getElementById('serviceApplicationForm').reset();
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('schemeModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // Form submission
+        document.getElementById('serviceApplicationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                serviceType: document.getElementById('modalTitle').textContent,
+                applicantName: document.getElementById('applicantName').value,
+                applicantEmail: document.getElementById('applicantEmail').value,
+                applicantPhone: document.getElementById('applicantPhone').value,
+                applicantAddress: document.getElementById('applicantAddress').value,
+                applicationType: document.getElementById('applicationType').value,
+                additionalInfo: document.getElementById('additionalInfo').value,
+                timestamp: new Date().toISOString(),
+                userId: sessionStorage.getItem('currentUser') || 'guest'
+            };
+
+            // Save to localStorage (in a real application, this would be sent to a server)
+            let applications = JSON.parse(localStorage.getItem('serviceApplications') || '[]');
+            applications.push(formData);
+            localStorage.setItem('serviceApplications', JSON.stringify(applications));
+
+            alert('Application submitted successfully! Your application has been saved and will be visible to administrators.');
+            closeModal();
+        });
+
+    </script>
+
+    <script>
+        // Translator functionality for option2 page
+        const translations = {
+            hi: {
+                "Financial Services": "वित्तीय सेवाएं",
+                "Back to Options": "विकल्पों पर वापस जाएं",
+                "Loans": "ऋण",
+                "Home Loan": "गृह ऋण",
+                "Apply Now": "अभी आवेदन करें",
+                "Personal Loan": "व्यक्तिगत ऋण",
+                "Business Loan": "व्यापार ऋण",
+                "Education Loan": "शिक्षा ऋण",
+                "Car Loan": "कार ऋण",
+                "Gold Loan": "सोना ऋण",
+                "Government Schemes": "सरकारी योजनाएं",
+                "Pradhan Mantri Jan Dhan Yojana": "प्रधान मंत्री जन धन योजना",
+                "Pradhan Mantri Awas Yojana": "प्रधान मंत्री आवास योजना",
+                "Ayushman Bharat Yojana": "आयुष्मान भारत योजना",
+                "Pradhan Mantri Kisan Samman Nidhi": "प्रधान मंत्री किसान सम्मान निधि",
+                "Swachh Bharat Mission": "स्वच्छ भारत मिशन",
+                "Digital India": "डिजिटल इंडिया",
+                "Skill India": "स्किल इंडिया",
+                "Startup India": "स्टार्टअप इंडिया",
+                "Make in India": "मेक इन इंडिया",
+                "Smart Cities Mission": "स्मार्ट सिटीज मिशन",
+                "Application submitted successfully! Your application has been saved and will be visible to administrators.": "आवेदन सफलतापूर्वक जमा किया गया! आपका आवेदन सहेजा गया है और यह प्रशासकों को दिखाई देगा।",
+                "Close": "बंद करें",
+                "Eligibility:": "योग्यता:",
+                "Description:": "विवरण:",
+                "Benefits:": "लाभ:",
+                "Requirements:": "आवश्यकताएं:",
+                "Process:": "प्रक्रिया:"
+            },
+            te: {
+                "Financial Services": "ఆర్థిక సేవలు",
+                "Back to Options": "ఎంపికలకు తిరిగి వెళ్ళు",
+                "Loans": "ఋణాలు",
+                "Home Loan": "ఇంటి ఋణం",
+                "Apply Now": "ఇప్పుడే దరఖాస్తు చేయండి",
+                "Personal Loan": "వ్యక్తిగత ఋణం",
+                "Business Loan": "వ్యాపార ఋణం",
+                "Education Loan": "విద్యా ఋణం",
+                "Car Loan": "కారు ఋణం",
+                "Gold Loan": "స్వర్ణ ఋణం",
+                "Government Schemes": "ప్రభుత్వ పథకాలు",
+                "Pradhan Mantri Jan Dhan Yojana": "ప్రధాన మంత్రి జన్ ధన్ యోజన",
+                "Pradhan Mantri Awas Yojana": "ప్రధాన మంత్రి ఆవాస్ యోజన",
+                "Ayushman Bharat Yojana": "ఆయుష్మాన్ భారత్ యోజన",
+                "Pradhan Mantri Kisan Samman Nidhi": "ప్రధాన మంత్రి కిసాన్ సమ్మాన్ నిధి",
+                "Swachh Bharat Mission": "స్వచ్ఛ భారత్ మిషన్",
+                "Digital India": "డిజిటల్ ఇండియా",
+                "Skill India": "స్కిల్ ఇండియా",
+                "Startup India": "స్టార్టప్ ఇండియా",
+                "Make in India": "మేక్ ఇన్ ఇండియా",
+                "Smart Cities Mission": "స్మార్ట్ సిటీస్ మిషన్",
+                "Application submitted successfully! Your application has been saved and will be visible to administrators.": "దరఖాస్తు విజయవంతంగా సమర్పించబడింది! మీ దరఖాస్తు సేవ్ చేయబడింది మరియు ఇది నిర్వాహకులకు కనిపిస్తుంది.",
+                "Close": "మూసివేయి",
+                "Eligibility:": "అర్హత:",
+                "Description:": "వివరణ:",
+                "Benefits:": "ప్రయోజనాలు:",
+                "Requirements:": "అవసరాలు:",
+                "Process:": "ప్రక్రియ:"
+            },
+            mr: {
+                "Financial Services": "आर्थिक सेवा",
+                "Back to Options": "पर्यायांकडे परत जा",
+                "Loans": "कर्जे",
+                "Home Loan": "गृह कर्ज",
+                "Apply Now": "आता अर्ज करा",
+                "Personal Loan": "वैयक्तिक कर्ज",
+                "Business Loan": "व्यवसाय कर्ज",
+                "Education Loan": "शिक्षण कर्ज",
+                "Car Loan": "कार कर्ज",
+                "Gold Loan": "सोने कर्ज",
+                "Government Schemes": "सरकारी योजना",
+                "Pradhan Mantri Jan Dhan Yojana": "प्रधान मंत्री जन धन योजना",
+                "Pradhan Mantri Awas Yojana": "प्रधान मंत्री आवास योजना",
+                "Ayushman Bharat Yojana": "आयुष्मान भारत योजना",
+                "Pradhan Mantri Kisan Samman Nidhi": "प्रधान मंत्री किसान सम्मान निधी",
+                "Swachh Bharat Mission": "स्वच्छ भारत मिशन",
+                "Digital India": "डिजिटल इंडिया",
+                "Skill India": "स्किल इंडिया",
+                "Startup India": "स्टार्टअप इंडिया",
+                "Make in India": "मेक इन इंडिया",
+                "Smart Cities Mission": "स्मार्ट सिटीज मिशन",
+                "Application submitted successfully! Your application has been saved and will be visible to administrators.": "अर्ज यशस्वीरित्या सबमिट झाला! तुमचा अर्ज सेव्ह झाला आहे आणि तो प्रशासकांना दिसेल.",
+                "Close": "बंद करा",
+                "Eligibility:": "पात्रता:",
+                "Description:": "वर्णन:",
+                "Benefits:": "फायदे:",
+                "Requirements:": "आवश्यकता:",
+                "Process:": "प्रक्रिया:"
+            },
+            ta: {
+                "Financial Services": "நிதி சேவைகள்",
+                "Back to Options": "விருப்பங்களுக்கு திரும்பு",
+                "Loans": "கடன்கள்",
+                "Home Loan": "வீட்டு கடன்",
+                "Apply Now": "இப்போது விண்ணப்பிக்கவும்",
+                "Personal Loan": "தனிப்பட்ட கடன்",
+                "Business Loan": "வணிக கடன்",
+                "Education Loan": "கல்வி கடன்",
+                "Car Loan": "கார் கடன்",
+                "Gold Loan": "தங்க கடன்",
+                "Government Schemes": "அரசு திட்டங்கள்",
+                "Pradhan Mantri Jan Dhan Yojana": "பிரதான் மந்திரி ஜன் தன் யோஜனா",
+                "Pradhan Mantri Awas Yojana": "பிரதான் மந்திரி அவாஸ் யோஜனா",
+                "Ayushman Bharat Yojana": "ஆயுஷ்மான் பாரத் யோஜனா",
+                "Pradhan Mantri Kisan Samman Nidhi": "பிரதான் மந்திரி கிசான் சம்மான் நிதி",
+                "Swachh Bharat Mission": "ஸ்வச் பாரத் மிஷன்",
+                "Digital India": "டிஜிட்டல் இந்தியா",
+                "Skill India": "ஸ்கில் இந்தியா",
+                "Startup India": "ஸ்டார்ட்அப் இந்தியா",
+                "Make in India": "மேக் இன் இந்தியா",
+                "Smart Cities Mission": "ஸ்மார்ட் சிட்டீஸ் மிஷன்",
+                "Application submitted successfully! Your application has been saved and will be visible to administrators.": "விண்ணப்பம் வெற்றிகரமாக சமர்ப்பிக்கப்பட்டது! உங்கள் விண்ணப்பம் சேமிக்கப்பட்டு நிர்வாகிகளுக்கு காட்சி அளிக்கப்படும்.",
+                "Close": "மூடு",
+                "Eligibility:": "தகுதி:",
+                "Description:": "விளக்கம்:",
+                "Benefits:": "நன்மைகள்:",
+                "Requirements:": "தேவைகள்:",
+                "Process:": "செயல்முறை:"
+            },
+            ur: {
+                "Financial Services": "مالیاتی خدمات",
+                "Back to Options": "اختیارات پر واپس جائیں",
+                "Loans": "قرضے",
+                "Home Loan": "گھر کا قرض",
+                "Apply Now": "ابھی درخواست دیں",
+                "Personal Loan": "ذاتی قرض",
+                "Business Loan": "کاروباری قرض",
+                "Education Loan": "تعلیمی قرض",
+                "Car Loan": "کار کا قرض",
+                "Gold Loan": "سونا قرض",
+                "Government Schemes": "حکومتی اسکیمیں",
+                "Pradhan Mantri Jan Dhan Yojana": "وزیر اعظم جن دھن یوجنا",
+                "Pradhan Mantri Awas Yojana": "وزیر اعظم آواس یوجنا",
+                "Ayushman Bharat Yojana": "ایوشمان بھارت یوجنا",
+                "Pradhan Mantri Kisan Samman Nidhi": "وزیر اعظم کسان سمان نिधی",
+                "Swachh Bharat Mission": "سوچھ بھارت مشن",
+                "Digital India": "ڈیجیٹل انڈیا",
+                "Skill India": "اسکیل انڈیا",
+                "Startup India": "سٹارٹ اپ انڈیا",
+                "Make in India": "میک ان انڈیا",
+                "Smart Cities Mission": "اسمارٹ سٹیز مشن",
+                "Application submitted successfully! Your application has been saved and will be visible to administrators.": "درخواست کامیابی سے جمع کرائی گئی! آپ کی درخواست محفوظ کر لی گئی ہے اور یہ ایڈمنسٹریٹرز کو نظر آئے گی۔",
+                "Close": "بند کریں",
+                "Eligibility:": "اہلیت:",
+                "Description:": "تفصیل:",
+                "Benefits:": "فوائد:",
+                "Requirements:": "ضروریات:",
+                "Process:": "عمل:"
+            },
+            gu: {
+                "Financial Services": "નાણાકીય સેવાઓ",
+                "Back to Options": "વિકલ્પો પર પાછા જાઓ",
+                "Loans": "કરજ",
+                "Home Loan": "ઘરનું કરજ",
+                "Apply Now": "હમણાં અરજી કરો",
+                "Personal Loan": "વ્યક્તિગત કરજ",
+                "Business Loan": "વ્યાપારિક કરજ",
+                "Education Loan": "શિક્ષણ કરજ",
+                "Car Loan": "કાર કરજ",
+                "Gold Loan": "સોનાનું કરજ",
+                "Government Schemes": "સરકારી યોજનાઓ",
+                "Pradhan Mantri Jan Dhan Yojana": "પ્રધાનમંત્રી જન ધન યોજના",
+                "Pradhan Mantri Awas Yojana": "પ્રધાનમંત્રી આવાસ યોજના",
+                "Ayushman Bharat Yojana": "આયુષ્માન ભારત યોજના",
+                "Pradhan Mantri Kisan Samman Nidhi": "પ્રધાનમંત્રી કિસાન સમ્માન નિધિ",
+                "Swachh Bharat Mission": "સ્વચ્છ ભારત મિશન",
+                "Digital India": "ડિજિટલ ઇન્ડિયા",
+                "Skill India": "સ્કિલ ઇન્ડિયા",
+                "Startup India": "સ્ટાર્ટઅપ ઇન્ડિયા",
+                "Make in India": "મેક ઇન ઇન્ડિયા",
+                "Smart Cities Mission": "સ્માર્ટ સિટીઝ મિશન",
+                "Application submitted successfully! Your application has been saved and will be visible to administrators.": "અરજી સફળતાપૂર્વક સબમિટ કરવામાં આવી! તમારી અરજી સેવ કરવામાં આવી છે અને તે એડમિનિસ્ટ્રેટર્સને દેખાશે.",
+                "Close": "બંધ કરો",
+                "Eligibility:": "પાત્રતા:",
+                "Description:": "વર્ણન:",
+                "Benefits:": "લાભો:",
+                "Requirements:": "જરૂરીયાતો:",
+                "Process:": "પ્રક્રિયા:"
+            },
+            kn: {
+                "Financial Services": "ಹಣಕಾಸು ಸೇವೆಗಳು",
+                "Back to Options": "ಆಯ್ಕೆಗಳಿಗೆ ಹಿಂತಿರುಗಿ",
+                "Loans": "ಸಾಲಗಳು",
+                "Home Loan": "ಮನೆ ಸಾಲ",
+                "Apply Now": "ಈಗ ಅರ್ಜಿ ಸಲ್ಲಿಸಿ",
+                "Personal Loan": "ವೈಯಕ್ತಿಕ ಸಾಲ",
+                "Business Loan": "ವ್ಯಾಪಾರ ಸಾಲ",
+                "Education Loan": "ಶಿಕ್ಷಣ ಸಾಲ",
+                "Car Loan": "ಕಾರು ಸಾಲ",
+                "Gold Loan": "ಚಿನ್ನದ ಸಾಲ",
+                "Government Schemes": "ಸರ್ಕಾರಿ ಯೋಜನೆಗಳು",
+                "Pradhan Mantri Jan Dhan Yojana": "ಪ್ರಧಾನ ಮಂತ್ರಿ ಜನ್ ಧನ್ ಯೋಜನೆ",
+                "Pradhan Mantri Awas Yojana": "ಪ್ರಧಾನ ಮಂತ್ರಿ ಆವಾಸ್ ಯೋಜನೆ",
+                "Ayushman Bharat Yojana": "ಆಯುಷ್ಮಾನ್ ಭಾರತ್ ಯೋಜನೆ",
+                "Pradhan Mantri Kisan Samman Nidhi": "ಪ್ರಧಾನ ಮಂತ್ರಿ ಕಿಸಾನ್ ಸಮ್ಮಾನ್ ನಿಧಿ",
+                "Swachh Bharat Mission": "ಸ್ವಚ್ಛ ಭಾರತ್ ಮಿಷನ್",
+                "Digital India": "ಡಿಜಿಟಲ್ ಇಂಡಿಯಾ",
+                "Skill India": "ಸ್ಕಿಲ್ ಇಂಡಿಯಾ",
+                "Startup India": "ಸ್ಟಾರ್ಟ್ ಅಪ್ ಇಂಡಿಯಾ",
+                "Make in India": "ಮೇಕ್ ಇನ್ ಇಂಡಿಯಾ",
+                "Smart Cities Mission": "ಸ್ಮಾರ್ಟ್ ಸಿಟೀಸ್ ಮಿಷನ್",
+                "Application submitted successfully! Your application has been saved and will be visible to administrators.": "ಅರ್ಜಿಯನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಸಲ್ಲಿಸಲಾಗಿದೆ! ನಿಮ್ಮ ಅರ್ಜಿಯನ್ನು ಉಳಿಸಲಾಗಿದೆ ಮತ್ತು ಇದು ನಿರ್ವಾಹಕರಿಗೆ ಕಾಣಿಸುತ್ತದೆ.",
+                "Close": "ಮುಚ್ಚಿ",
+                "Eligibility:": "ಅರ್ಹತೆ:",
+                "Description:": "ವಿವರಣೆ:",
+                "Benefits:": "ಲಾಭಗಳು:",
+                "Requirements:": "ಅವಶ್ಯಕತೆಗಳು:",
+                "Process:": "ಪ್ರಕ್ರಿಯೆ:"
+            },
+            or: {
+                "Financial Services": "ଆର୍ଥିକ ସେବା",
+                "Back to Options": "ବିକଳ୍ପଗୁଡ଼ିକୁ ଫେରନ୍ତୁ",
+                "Loans": "ଋଣ",
+                "Home Loan": "ଘର ଋଣ",
+                "Apply Now": "ବର୍ତ୍ତମାନ ଆବେଦନ କରନ୍ତୁ",
+                "Personal Loan": "ବ୍ୟକ୍ତିଗତ ଋଣ",
+                "Business Loan": "ବ୍ୟବସାୟ ଋଣ",
+                "Education Loan": "ଶିକ୍ଷା ଋଣ",
+                "Car Loan": "କାର୍ ଋଣ",
+                "Gold Loan": "ସୁବର୍ଣ୍ଣ ଋଣ",
+                "Government Schemes": "ସରକାରୀ ଯୋଜନା",
+                "Pradhan Mantri Jan Dhan Yojana": "ପ୍ରଧାନମନ୍ତ୍ରୀ ଜନ୍ ଧନ୍ ଯୋଜନା",
+                "Pradhan Mantri Awas Yojana": "ପ୍ରଧାନମନ୍ତ୍ରୀ ଆବାସ୍ ଯୋଜନା",
+                "Ayushman Bharat Yojana": "ଆୟୁଷ୍ମାନ୍ ଭାରତ ଯୋଜନା",
+                "Pradhan Mantri Kisan Samman Nidhi": "ପ୍ରଧାନମନ୍ତ୍ରୀ କୃଷକ ସମ୍ମାନ ନିଧି",
+                "Swachh Bharat Mission": "ସ୍ଵଚ୍ଛ ଭାରତ ମିଶନ୍",
+                "Digital India": "ଡିଜିଟାଲ୍ ଇଣ୍ଡିଆ",
+                "Skill India": "ସ୍କିଲ୍ ଇଣ୍ଡିଆ",
+                "Startup India": "ଷ୍ଟାର୍ଟଅପ୍ ଇଣ୍ଡିଆ",
+                "Make in India": "ମେକ୍ ଇନ୍ ଇଣ୍ଡିଆ",
+                "Smart Cities Mission": "ସ୍ମାର୍ଟ୍ ସିଟିଜ୍ ମିଶନ୍",
+                "Application submitted successfully! Your application has been saved and will be visible to administrators.": "ଆବେଦନ ସଫଳତାପୂର୍ବକ ଦାଖଲ ହୋଇଛି! ଆପଣଙ୍କ ଆବେଦନ ସେଭ୍ ହୋଇଛି ଏବଂ ଏହା ପ୍ରଶାସକମାନଙ୍କୁ ଦେଖାଯିବ।",
+                "Close": "ବନ୍ଦ କରନ୍ତୁ",
+                "Eligibility:": "ଯୋଗ୍ୟତା:",
+                "Description:": "ବର୍ଣ୍ଣନା:",
+                "Benefits:": "ଲାଭ:",
+                "Requirements:": "ଆବଶ୍ୟକତା:",
+                "Process:": "ପ୍ରକ୍ରିୟା:"
+            },
+            pa: {
+                "Financial Services": "ਮਾਲੀ ਸੇਵਾਵਾਂ",
+                "Back to Options": "ਵਿਕਲਪਾਂ ਵਾਪਸ ਜਾਓ",
+                "Loans": "ਕਰਜ਼ੇ",
+                "Home Loan": "ਘਰ ਦਾ ਕਰਜ਼ਾ",
+                "Apply Now": "ਹੁਣੇ ਅਰਜ਼ੀ ਦਿਓ",
+                "Personal Loan": "ਨਿੱਜੀ ਕਰਜ਼ਾ",
+                "Business Loan": "ਕਾਰੋਬਾਰੀ ਕਰਜ਼ਾ",
+                "Education Loan": "ਸਿੱਖਿਆ ਕਰਜ਼ਾ",
+                "Car Loan": "ਕਾਰ ਦਾ ਕਰਜ਼ਾ",
+                "Gold Loan": "ਸੋਨੇ ਦਾ ਕਰਜ਼ਾ",
+                "Government Schemes": "ਸਰਕਾਰੀ ਸਕੀਮਾਂ",
+                "Pradhan Mantri Jan Dhan Yojana": "ਪ੍ਰਧਾਨ ਮੰਤਰੀ ਜਨ ਧਨ ਯੋਜਨਾ",
+                "Pradhan Mantri Awas Yojana": "ਪ੍ਰਧਾਨ ਮੰਤਰੀ ਆਵਾਸ ਯੋਜਨਾ",
+                "Ayushman Bharat Yojana": "ਆਯੁਸ਼ਮਾਨ ਭਾਰਤ ਯੋਜਨਾ",
+                "Pradhan Mantri Kisan Samman Nidhi": "ਪ੍ਰਧਾਨ ਮੰਤਰੀ ਕਿਸਾਨ ਸੰਮਾਨ ਨਿਧੀ",
+                "Swachh Bharat Mission": "ਸਵੱਛ ਭਾਰਤ ਮਿਸ਼ਨ",
+                "Digital India": "ਡਿਜ਼ੀਟਲ ਇੰਡਿਆ",
+                "Skill India": "ਸਕਿਲ ਇੰਡਿਆ",
+                "Startup India": "ਸਟਾਰਟਅੱਪ ਇੰਡਿਆ",
+                "Make in India": "ਮੇਕ ਇਨ ਇੰਡਿਆ",
+                "Smart Cities Mission": "ਸਮਾਰਟ ਸਿਟੀਜ਼ ਮਿਸ਼ਨ",
+                "Application submitted successfully! Your application has been saved and will be visible to administrators.": "ਅਰਜ਼ੀ ਸਫਲਤਾਪੂਰਵਕ ਦਰਜ ਕੀਤੀ ਗਈ! ਤੁਹਾਡੀ ਅਰਜ਼ੀ ਸੇਵ ਕੀਤੀ ਗਈ ਹੈ ਅਤੇ ਇਹ ਐਡਮਿਨਿਸਟ੍ਰੇਟਰਾਂ ਨੂੰ ਦਿਖਾਈ ਦੇਵੇਗੀ।",
+                "Close": "ਬੰਦ ਕਰੋ",
+                "Eligibility:": "ਯੋਗਤਾ:",
+                "Description:": "ਵਰਣਨ:",
+                "Benefits:": "ਲਾਭ:",
+                "Requirements:": "ਲੋੜਾਂ:",
+                "Process:": "ਕਾਰਵਾਈ:"
+            },
+            as: {
+                "Financial Services": "আৰ্থিক সেৱা",
+                "Back to Options": "বিকল্পবোৰলৈ ঘূৰি যাওক",
+                "Loans": "ঋণ",
+                "Home Loan": "ঘৰ ঋণ",
+                "Apply Now": "এতিয়া আবেদন কৰক",
+                "Personal Loan": "ব্যক্তিগত ঋণ",
+                "Business Loan": "ব্যৱসায়িক ঋণ",
+                "Education Loan": "শিক্ষা ঋণ",
+                "Car Loan": "গাড়ী ঋণ",
+                "Gold Loan": "সোণ ঋণ",
+                "Government Schemes": "চৰকাৰী আঁচনি",
+                "Pradhan Mantri Jan Dhan Yojana": "প্ৰধান মন্ত্ৰী জন ধন যোজনা",
+                "Pradhan Mantri Awas Yojana": "প্ৰধান মন্ত্ৰী আৱাস যোজনা",
+                "Ayushman Bharat Yojana": "আয়ুষ্মান ভাৰত যোজনা",
+                "Pradhan Mantri Kisan Samman Nidhi": "প্ৰধান মন্ত্ৰী কৃষক সম্মান নিধি",
+                "Swachh Bharat Mission": "স্বচ্ছ ভাৰত মিছন",
+                "Digital India": "ডিজিটেল ইণ্ডিয়া",
+                "Skill India": "স্কিল ইণ্ডিয়া",
+                "Startup India": "স্টাৰ্টআপ ইণ্ডিয়া",
+                "Make in India": "মেক ইন ইণ্ডিয়া",
+                "Smart Cities Mission": "স্মাৰ্ট চিটিজ মিছন",
+                "Application submitted successfully! Your application has been saved and will be visible to administrators.": "আবেদন সফলতাৰে দাখিল কৰা হৈছে! আপোনাৰ আবেদনখন ছেভ কৰা হৈছে আৰু ই প্ৰশাসকসকলক দেখুওৱা হ'ব।",
+                "Close": "বন্ধ কৰক",
+                "Eligibility:": "যোগ্যতা:",
+                "Description:": "বিৱৰণ:",
+                "Benefits:": "লাভ:",
+                "Requirements:": "প্ৰয়োজনীয়তা:",
+                "Process:": "প্ৰক্ৰিয়া:"
+            },
+            ml: {
+                "Financial Services": "ആർഥിക സേവനങ്ങൾ",
+                "Back to Options": "ഓപ്ഷനുകളിലേക്ക് മടങ്ങുക",
+                "Loans": "വായ്പകൾ",
+                "Home Loan": "വീട് വായ്പ",
+                "Apply Now": "ഇപ്പോൾ അപേക്ഷിക്കുക",
+                "Personal Loan": "വ്യക്തിഗത വായ്പ",
+                "Business Loan": "ബിസിനസ് വായ്പ",
+                "Education Loan": "വിദ്യാഭ്യാസ വായ്പ",
+                "Car Loan": "കാർ വായ്പ",
+                "Gold Loan": "സ്വർണ്ണ വായ്പ",
+                "Government Schemes": "സർക്കാർ പദ്ധതികൾ",
+                "Pradhan Mantri Jan Dhan Yojana": "പ്രധാനമന്ത്രി ജൻ ധൻ യോജന",
+                "Pradhan Mantri Awas Yojana": "പ്രധാനമന്ത്രി ആവാസ് യോജന",
+                "Ayushman Bharat Yojana": "ആയുഷ്മാൻ ഭാരത് യോജന",
+                "Pradhan Mantri Kisan Samman Nidhi": "പ്രധാനമന്ത്രി കിസാൻ സമ്മാൻ നിധി",
+                "Swachh Bharat Mission": "സ്വച്ഛ ഭാരത് മിഷൻ",
+                "Digital India": "ഡിജിറ്റൽ ഇന്ത്യ",
+                "Skill India": "സ്കിൽ ഇന്ത്യ",
+                "Startup India": "സ്റ്റാർട്ടപ്പ് ഇന്ത്യ",
+                "Make in India": "മേക് ഇൻ ഇന്ത്യ",
+                "Smart Cities Mission": "സ്മാർട്ട് സിറ്റീസ് മിഷൻ",
+                "Application submitted successfully! Your application has been saved and will be visible to administrators.": "അപേക്ഷ വിജയകരമായി സമർപ്പിച്ചു! നിങ്ങളുടെ അപേക്ഷ സംരക്ഷിച്ചു കഴിഞ്ഞു കൂടാതെ ഇത് അഡ്മിനിസ്ട്രേറ്റർമാർക്ക് കാണാവുന്നതാണ്.",
+                "Close": "അടയ്ക്കുക",
+                "Eligibility:": "യോഗ്യത:",
+                "Description:": "വിവരണം:",
+                "Benefits:": "പ്രയോജനങ്ങൾ:",
+                "Requirements:": "ആവശ്യകതകൾ:",
+                "Process:": "പ്രക്രിയ:"
+            },
+            ne: {
+                "Financial Services": "आर्थिक सेवा",
+                "Back to Options": "विकल्पहरूमा फर्कनुहोस्",
+                "Loans": "ऋणहरू",
+                "Home Loan": "घर ऋण",
+                "Apply Now": "अहिले आवेदन गर्नुहोस्",
+                "Personal Loan": "व्यक्तिगत ऋण",
+                "Business Loan": "व्यापार ऋण",
+                "Education Loan": "शिक्षा ऋण",
+                "Car Loan": "कार ऋण",
+                "Gold Loan": "सुन ऋण",
+                "Government Schemes": "सरकारी योजना",
+                "Pradhan Mantri Jan Dhan Yojana": "प्रधानमन्त्री जन धन योजना",
+                "Pradhan Mantri Awas Yojana": "प्रधानमन्त्री आवास योजना",
+                "Ayushman Bharat Yojana": "आयुष्मान भारत योजना",
+                "Pradhan Mantri Kisan Samman Nidhi": "प्रधानमन्त्री किसान सम्मान निधि",
+                "Swachh Bharat Mission": "स्वच्छ भारत मिशन",
+                "Digital India": "डिजिटल भारत",
+                "Skill India": "स्किल भारत",
+                "Startup India": "स्टार्टअप भारत",
+                "Make in India": "मेक इन भारत",
+                "Smart Cities Mission": "स्मार्ट सिटिज मिशन",
+                "Application submitted successfully! Your application has been saved and will be visible to administrators.": "आवेदन सफलतापूर्वक पेश गरियो! तपाईको आवेदन सुरक्षित गरिएको छ र यो प्रशासकहरूलाई देखिने छ।",
+                "Close": "बन्द गर्नुहोस्",
+                "Eligibility:": "योग्यता:",
+                "Description:": "विवरण:",
+                "Benefits:": "फाइदाहरू:",
+                "Requirements:": "आवश्यकताहरू:",
+                "Process:": "प्रक्रिया:"
+            },
+            si: {
+                "Financial Services": "මූල්‍ය සේවාවන්",
+                "Back to Options": "විකල්ප වෙත ආපසු යන්න",
+                "Loans": "ණයන්",
+                "Home Loan": "නිවාස ණය",
+                "Apply Now": "දැන් අයදුම් කරන්න",
+                "Personal Loan": "පුද්ගලික ණය",
+                "Business Loan": "ව්‍යාපාරික ණය",
+                "Education Loan": "අධ්‍යාපනික ණය",
+                "Car Loan": "මෝටර් රථ ණය",
+                "Gold Loan": "රන් ණය",
+                "Government Schemes": "රජයේ වැඩසටහන්",
+                "Pradhan Mantri Jan Dhan Yojana": "ප්‍රධාන මන්ත්‍රී ජන් ධන් යෝජනාව",
+                "Pradhan Mantri Awas Yojana": "ප්‍රධාන මන්ත්‍රී ආවාස යෝජනාව",
+                "Ayushman Bharat Yojana": "ආයුෂ්මාන් භාරත යෝජනාව",
+                "Pradhan Mantri Kisan Samman Nidhi": "ප්‍රධාන මන්ත්‍රී කිසාන් සම්මාන් නිධිය",
+                "Swachh Bharat Mission": "ස්වච්ඡ භාරත මිෂන්",
+                "Digital India": "ඩිජිටල් ඉන්දියාව",
+                "Skill India": "ස්කිල් ඉන්දියාව",
+                "Startup India": "ස්ටාර්ට්අප් ඉන්දියාව",
+                "Make in India": "මේක් ඉන් ඉන්දියාව",
+                "Smart Cities Mission": "ස්මාර්ට් සිටි මිෂන්",
+                "Application submitted successfully! Your application has been saved and will be visible to administrators.": "අයදුම්පත සාර්ථකව ඉදිරිපත් කරන ලදී! ඔබේ අයදුම්පත සුරක්ෂිත කරන ලද අතර පරිපාලකයින්ට දර්ශනය වේ.",
+                "Close": "වසන්න",
+                "Eligibility:": "අදාළතාව:",
+                "Description:": "විස්තරය:",
+                "Benefits:": "ප්‍රතිලාභ:",
+                "Requirements:": "අවශ්‍යතා:",
+                "Process:": "ක්‍රියාදාමය:"
+            },
+            bn: {
+                "Financial Services": "আর্থিক পরিষেবা",
+                "Back to Options": "বিকল্পগুলিতে ফিরে যান",
+                "Loans": "ঋণ",
+                "Home Loan": "বাড়ি ঋণ",
+                "Apply Now": "এখন আবেদন করুন",
+                "Personal Loan": "ব্যক্তিগত ঋণ",
+                "Business Loan": "ব্যবসায় ঋণ",
+                "Education Loan": "শিক্ষা ঋণ",
+                "Car Loan": "গাড়ি ঋণ",
+                "Gold Loan": "সোনা ঋণ",
+                "Government Schemes": "সরকারি প্রকল্প",
+                "Pradhan Mantri Jan Dhan Yojana": "প্রধানমন্ত্রী জন ধন যোজনা",
+                "Pradhan Mantri Awas Yojana": "প্রধানমন্ত্রী আবাস যোজনা",
+                "Ayushman Bharat Yojana": "আয়ুষ্মান ভারত যোজনা",
+                "Pradhan Mantri Kisan Samman Nidhi": "প্রধানমন্ত্রী কিষাণ সম্মান নিধি",
+                "Swachh Bharat Mission": "স্বচ্ছ ভারত মিশন",
+                "Digital India": "ডিজিটাল ভারত",
+                "Skill India": "স্কিল ভারত",
+                "Startup India": "স্টার্টআপ ভারত",
+                "Make in India": "মেক ইন ভারত",
+                "Smart Cities Mission": "স্মার্ট সিটি মিশন",
+                "Application submitted successfully! Your application has been saved and will be visible to administrators.": "আবেদন সফলভাবে জমা দেওয়া হয়েছে! আপনার আবেদন সংরক্ষণ করা হয়েছে এবং এটি প্রশাসকদের কাছে দৃশ্যমান হবে।",
+                "Close": "বন্ধ করুন",
+                "Eligibility:": "যোগ্যতা:",
+                "Description:": "বিবরণ:",
+                "Benefits:": "সুবিধা:",
+                "Requirements:": "প্রয়োজনীয়তা:",
+                "Process:": "প্রক্রিয়া:"
+            }
+        };
+
+        // Apply translation on page load
+        window.addEventListener('load', function() {
+            const savedLanguage = localStorage.getItem('selectedLanguage');
+            if (savedLanguage && savedLanguage !== 'en') {
+                setTimeout(() => {
+                    applyTranslation(savedLanguage);
+                }, 100);
+            }
+        });
+
+        // Function to apply translation
+        function applyTranslation(language) {
+            if (language === 'en') return;
+
+            const langTranslations = translations[language];
+            if (!langTranslations) return;
+
+            // Translate all text content on the page
+            const elements = document.querySelectorAll('*');
+            elements.forEach(element => {
+                if (element.children.length === 0 && element.textContent.trim()) {
+                    const originalText = element.textContent.trim();
+                    if (langTranslations[originalText]) {
+                        element.textContent = langTranslations[originalText];
+                    }
+                }
+            });
+
+            // Translate input placeholders
+            const inputs = document.querySelectorAll('input[placeholder]');
+            inputs.forEach(input => {
+                const placeholder = input.getAttribute('placeholder');
+                if (langTranslations[placeholder]) {
+                    input.setAttribute('placeholder', langTranslations[placeholder]);
+                }
+            });
+
+            // Translate button values
+            const buttons = document.querySelectorAll('button, input[type="submit"]');
+            buttons.forEach(button => {
+                const value = button.value || button.textContent;
+                if (langTranslations[value]) {
+                    if (button.tagName === 'INPUT') {
+                        button.value = langTranslations[value];
+                    } else {
+                        button.textContent = langTranslations[value];
+                    }
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #00ff80 0%, #313231 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .admin-section {
+            margin-bottom: 50px;
+        }
+
+        .admin-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .user-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .user-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #e1e5e9;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            background: #f9f9f9;
+        }
+
+        .user-info {
+            flex-grow: 1;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .edit-btn {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background-color: #0056b3;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+
+        .back-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .edit-form {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #e1e5e9;
+            border-radius: 10px;
+            background: #f9f9f9;
+        }
+
+        .edit-form input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .applications-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .applications-table th, .applications-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .applications-table th {
+            background-color: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        .applications-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .applications-table tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .no-applications {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-style: italic;
+        }
+
+        .application-details {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .application-details strong {
+            color: #333;
+        }
+
+        @media (max-width: 480px) {
+            .admin-container {
+                padding: 20px;
+            }
+            .user-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .user-actions {
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <h1>Admin Panel</h1>
+        
+        <div class="admin-section">
+            <h2>User Management</h2>
+            <ul class="user-list" id="userList"></ul>
+        </div>
+
+        <div class="admin-section">
+            <h2>Service Applications</h2>
+            <div id="applicationsContainer">
+                <table class="applications-table" id="applicationsTable">
+                    <thead>
+                        <tr>
+                            <th>Service Type</th>
+                            <th>Applicant Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Application Type</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="applicationsBody">
+                        <!-- Applications will be populated here -->
+                    </tbody>
+                </table>
+                <div class="no-applications" id="noApplications" style="display: none;">
+                    No service applications found.
+                </div>
+            </div>
+        </div>
+
+        <a href="options.html" class="back-btn">Back to Options</a>
+    </div>
+
+    <script>
+        // Get users from localStorage
+        function getUsers() {
+            const users = localStorage.getItem('users');
+            return users ? JSON.parse(users) : [];
+        }
+
+        // Save users to localStorage
+        function saveUsers(users) {
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+
+        // Render user list
+        function renderUsers() {
+            const users = getUsers();
+            const userList = document.getElementById('userList');
+            userList.innerHTML = '';
+
+            users.forEach((user, index) => {
+                const li = document.createElement('li');
+                li.className = 'user-item';
+                li.innerHTML = `
+                    <div class="user-info">
+                        <strong>Username:</strong> ${user.username}<br>
+                        <strong>Password:</strong> ${user.password}
+                    </div>
+                    <div class="user-actions">
+                        <button class="edit-btn" onclick="editUser(${index})">Edit</button>
+                        <button class="delete-btn" onclick="deleteUser(${index})">Delete</button>
+                    </div>
+                    <div class="edit-form" id="editForm${index}">
+                        <input type="text" id="editUsername${index}" value="${user.username}" placeholder="Username">
+                        <input type="password" id="editPassword${index}" value="${user.password}" placeholder="Password">
+                        <button onclick="saveEdit(${index})">Save</button>
+                        <button onclick="cancelEdit(${index})">Cancel</button>
+                    </div>
+                `;
+                userList.appendChild(li);
+            });
+        }
+
+        // Edit user
+        function editUser(index) {
+            const editForm = document.getElementById(`editForm${index}`);
+            editForm.style.display = editForm.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Save edit
+        function saveEdit(index) {
+            const users = getUsers();
+            const newUsername = document.getElementById(`editUsername${index}`).value;
+            const newPassword = document.getElementById(`editPassword${index}`).value;
+
+            if (newUsername && newPassword) {
+                users[index] = { username: newUsername, password: newPassword };
+                saveUsers(users);
+                renderUsers();
+            }
+        }
+
+        // Cancel edit
+        function cancelEdit(index) {
+            document.getElementById(`editForm${index}`).style.display = 'none';
+        }
+
+        // Delete user
+        function deleteUser(index) {
+            if (confirm('Are you sure you want to delete this user?')) {
+                const users = getUsers();
+                users.splice(index, 1);
+                saveUsers(users);
+                renderUsers();
+            }
+        }
+
+        // Load users on page load
+        renderUsers();
+        renderApplications();
+
+        // Get applications from localStorage
+        function getApplications() {
+            const applications = localStorage.getItem('serviceApplications');
+            return applications ? JSON.parse(applications) : [];
+        }
+
+        // Render applications list
+        function renderApplications() {
+            const applications = getApplications();
+            const applicationsBody = document.getElementById('applicationsBody');
+            const noApplications = document.getElementById('noApplications');
+            
+            applicationsBody.innerHTML = '';
+
+            if (applications.length === 0) {
+                noApplications.style.display = 'block';
+                return;
+            }
+
+            noApplications.style.display = 'none';
+
+            applications.forEach((application, index) => {
+                const row = document.createElement('tr');
+                const applicationDate = new Date(application.timestamp).toLocaleDateString();
+                
+                row.innerHTML = `
+                    <td>${application.serviceType}</td>
+                    <td>${application.applicantName}</td>
+                    <td>${application.applicantEmail}</td>
+                    <td>${application.applicantPhone}</td>
+                    <td>${application.applicationType}</td>
+                    <td>${applicationDate}</td>
+                    <td>
+                        <button class="edit-btn" onclick="viewApplicationDetails(${index})">View Details</button>
+                        <button class="delete-btn" onclick="deleteApplication(${index})">Delete</button>
+                    </td>
+                `;
+                applicationsBody.appendChild(row);
+            });
+        }
+
+        // View application details
+        function viewApplicationDetails(index) {
+            const applications = getApplications();
+            const application = applications[index];
+            
+            const details = `
+                <strong>Service Type:</strong> ${application.serviceType}<br>
+                <strong>Applicant Name:</strong> ${application.applicantName}<br>
+                <strong>Email:</strong> ${application.applicantEmail}<br>
+                <strong>Phone:</strong> ${application.applicantPhone}<br>
+                <strong>Address:</strong> ${application.applicantAddress}<br>
+                <strong>Application Type:</strong> ${application.applicationType}<br>
+                <strong>Additional Info:</strong> ${application.additionalInfo || 'N/A'}<br>
+                <strong>User ID:</strong> ${application.userId}<br>
+                <strong>Submitted Date:</strong> ${new Date(application.timestamp).toLocaleString()}
+            `;
+            
+            alert(`Application Details:\n\n${details.replace(/<br>/g, '\n').replace(/<strong>/g, '').replace(/<\/strong>/g, '')}`);
+        }
+
+        // Delete application
+        function deleteApplication(index) {
+            if (confirm('Are you sure you want to delete this application?')) {
+                const applications = getApplications();
+                applications.splice(index, 1);
+                localStorage.setItem('serviceApplications', JSON.stringify(applications));
+                renderApplications();
+            }
+        }
+
+    </script>
+
+    <script>
+        // Translator functionality for admin page
+        const translations = {
+            hi: {
+                "Admin Panel": "एडमिन पैनल",
+                "User Management": "उपयोगकर्ता प्रबंधन",
+                "Registered Users": "पंजीकृत उपयोगकर्ता",
+                "No users registered yet.": "अभी तक कोई उपयोगकर्ता पंजीकृत नहीं हुआ है।",
+                "Name:": "नाम:",
+                "Email:": "ईमेल:",
+                "Phone:": "फोन:",
+                "Address:": "पता:",
+                "Registered Date:": "पंजीकरण तिथि:",
+                "Delete": "हटाएं",
+                "Application Management": "आवेदन प्रबंधन",
+                "Service Applications": "सेवा आवेदन",
+                "No applications submitted yet.": "अभी तक कोई आवेदन जमा नहीं हुआ है।",
+                "Applicant Name:": "आवेदक का नाम:",
+                "Applicant Email:": "आवेदक का ईमेल:",
+                "Applicant Phone:": "आवेदक का फोन:",
+                "Applicant Address:": "आवेदक का पता:",
+                "Application Type:": "आवेदन प्रकार:",
+                "Additional Info:": "अतिरिक्त जानकारी:",
+                "User ID:": "उपयोगकर्ता आईडी:",
+                "Submitted Date:": "जमा करने की तिथि:",
+                "View Details": "विवरण देखें",
+                "Are you sure you want to delete this user?": "क्या आप वाकई इस उपयोगकर्ता को हटाना चाहते हैं?",
+                "Are you sure you want to delete this application?": "क्या आप वाकई इस आवेदन को हटाना चाहते हैं?",
+                "Application Details:": "आवेदन विवरण:"
+            },
+            te: {
+                "Admin Panel": "అడ్మిన్ ప్యానెల్",
+                "User Management": "వినియోగదారు నిర్వహణ",
+                "Registered Users": "నమోదైన వినియోగదారులు",
+                "No users registered yet.": "ఇంకా ఎవరూ నమోదు కాలేదు.",
+                "Name:": "పేరు:",
+                "Email:": "ఇమెయిల్:",
+                "Phone:": "ఫోన్:",
+                "Address:": "చిరునామా:",
+                "Registered Date:": "నమోదు తేదీ:",
+                "Delete": "తొలగించు",
+                "Application Management": "అప్లికేషన్ నిర్వహణ",
+                "Service Applications": "సేవా అప్లికేషన్లు",
+                "No applications submitted yet.": "ఇంకా ఎటువంటి అప్లికేషన్లు సమర్పించలేదు.",
+                "Applicant Name:": "అప్లైయర్ పేరు:",
+                "Applicant Email:": "అప్లైయర్ ఇమెయిల్:",
+                "Applicant Phone:": "అప్లైయర్ ఫోన్:",
+                "Applicant Address:": "అప్లైయర్ చిరునామా:",
+                "Application Type:": "అప్లికేషన్ రకం:",
+                "Additional Info:": "అదనపు సమాచారం:",
+                "User ID:": "వినియోగదారు ఐడి:",
+                "Submitted Date:": "సమర్పించిన తేదీ:",
+                "View Details": "వివరాలు చూడండి",
+                "Are you sure you want to delete this user?": "మీరు ఖచ్చితంగా ఈ వినియోగదారుని తొలగించాలనుకుంటున్నారా?",
+                "Are you sure you want to delete this application?": "మీరు ఖచ్చితంగా ఈ అప్లికేషన్ తొలగించాలనుకుంటున్నారా?",
+                "Application Details:": "అప్లికేషన్ వివరాలు:"
+            },
+            mr: {
+                "Admin Panel": "अॅडमिन पॅनल",
+                "User Management": "वापरकर्ता व्यवस्थापन",
+                "Registered Users": "नोंदणीकृत वापरकर्ते",
+                "No users registered yet.": "अद्याप कोणतेही वापरकर्ते नोंदणीकृत नाहीत.",
+                "Name:": "नाव:",
+                "Email:": "ईमेल:",
+                "Phone:": "फोन:",
+                "Address:": "पत्ता:",
+                "Registered Date:": "नोंदणी तारीख:",
+                "Delete": "हटवा",
+                "Application Management": "अर्ज व्यवस्थापन",
+                "Service Applications": "सेवा अर्ज",
+                "No applications submitted yet.": "अद्याप कोणतेही अर्ज सादर झाले नाहीत.",
+                "Applicant Name:": "अर्जदाराचे नाव:",
+                "Applicant Email:": "अर्जदाराचा ईमेल:",
+                "Applicant Phone:": "अर्जदाराचा फोन:",
+                "Applicant Address:": "अर्जदाराचा पत्ता:",
+                "Application Type:": "अर्ज प्रकार:",
+                "Additional Info:": "अतिरिक्त माहिती:",
+                "User ID:": "वापरकर्ता आयडी:",
+                "Submitted Date:": "सादर केलेली तारीख:",
+                "View Details": "तपशील पहा",
+                "Are you sure you want to delete this user?": "तुम्हाला खात्री आहे की तुम्ही हा वापरकर्ता हटवू इच्छिता?",
+                "Are you sure you want to delete this application?": "तुम्हाला खात्री आहे की तुम्ही हा अर्ज हटवू इच्छिता?",
+                "Application Details:": "अर्ज तपशील:"
+            },
+            ta: {
+                "Admin Panel": "நிர்வாகக் குழு",
+                "User Management": "பயனர் நிர்வாகம்",
+                "Registered Users": "பதிவு செய்யப்பட்ட பயனர்கள்",
+                "No users registered yet.": "இன்னும் எந்த பயனர்களும் பதிவு செய்யப்படவில்லை.",
+                "Name:": "பெயர்:",
+                "Email:": "மின்னஞ்சல்:",
+                "Phone:": "தொலைபேசி:",
+                "Address:": "முகவரி:",
+                "Registered Date:": "பதிவு தேதி:",
+                "Delete": "நீக்கு",
+                "Application Management": "விண்ணப்ப நிர்வாகம்",
+                "Service Applications": "சேவை விண்ணப்பங்கள்",
+                "No applications submitted yet.": "இன்னும் எந்த விண்ணப்பங்களும் சமர்ப்பிக்கப்படவில்லை.",
+                "Applicant Name:": "விண்ணப்பதாரர் பெயர்:",
+                "Applicant Email:": "விண்ணப்பதாரர் மின்னஞ்சல்:",
+                "Applicant Phone:": "விண்ணப்பதாரர் தொலைபேசி:",
+                "Applicant Address:": "விண்ணப்பதாரர் முகவரி:",
+                "Application Type:": "விண்ணப்ப வகை:",
+                "Additional Info:": "கூடுதல் தகவல்:",
+                "User ID:": "பயனர் ஐடி:",
+                "Submitted Date:": "சமர்ப்பிக்கப்பட்ட தேதி:",
+                "View Details": "விவரங்களைப் பார்க்க",
+                "Are you sure you want to delete this user?": "இந்த பயனரை நீக்க விரும்புகிறீர்களா?",
+                "Are you sure you want to delete this application?": "இந்த விண்ணப்பத்தை நீக்க விரும்புகிறீர்களா?",
+                "Application Details:": "விண்ணப்ப விவரங்கள்:"
+            },
+            ur: {
+                "Admin Panel": "ایڈمن پینل",
+                "User Management": "صارف انتظام",
+                "Registered Users": "رجسٹرڈ صارفین",
+                "No users registered yet.": "ابھی تک کوئی صارف رجسٹر نہیں ہوا۔",
+                "Name:": "نام:",
+                "Email:": "ای میل:",
+                "Phone:": "فون:",
+                "Address:": "پتہ:",
+                "Registered Date:": "رجسٹریشن کی تاریخ:",
+                "Delete": "حذف کریں",
+                "Application Management": "درخواست کا انتظام",
+                "Service Applications": "سروس کی درخواستیں",
+                "No applications submitted yet.": "ابھی تک کوئی درخواست جمع نہیں کرائی گئی۔",
+                "Applicant Name:": "درخواست گزار کا نام:",
+                "Applicant Email:": "درخواست گزار کا ای میل:",
+                "Applicant Phone:": "درخواست گزار کا فون:",
+                "Applicant Address:": "درخواست گزار کا پتہ:",
+                "Application Type:": "درخواست کی قسم:",
+                "Additional Info:": "اضافی معلومات:",
+                "User ID:": "صارف کی شناخت:",
+                "Submitted Date:": "جمع کرانے کی تاریخ:",
+                "View Details": "تفصیلات دیکھیں",
+                "Are you sure you want to delete this user?": "کیا آپ واقعی اس صارف کو حذف کرنا چاہتے ہیں؟",
+                "Are you sure you want to delete this application?": "کیا آپ واقعی اس درخواست کو حذف کرنا چاہتے ہیں؟",
+                "Application Details:": "درخواست کی تفصیلات:"
+            },
+            gu: {
+                "Admin Panel": "એડમિન પેનલ",
+                "User Management": "વપરાશકર્તા વ્યવસ્થાપન",
+                "Registered Users": "નોંધાયેલ વપરાશકર્તાઓ",
+                "No users registered yet.": "હજી સુધી કોઈ વપરાશકર્તા નોંધાયા નથી.",
+                "Name:": "નામ:",
+                "Email:": "ઇમેઇલ:",
+                "Phone:": "ફોન:",
+                "Address:": "સરનામું:",
+                "Registered Date:": "નોંધણી તારીખ:",
+                "Delete": "કાઢી નાખો",
+                "Application Management": "અરજી વ્યવસ્થાપન",
+                "Service Applications": "સેવા અરજીઓ",
+                "No applications submitted yet.": "હજી સુધી કોઈ અરજી સબમિટ કરવામાં આવી નથી.",
+                "Applicant Name:": "અરજદારનું નામ:",
+                "Applicant Email:": "અરજદારનો ઇમેઇલ:",
+                "Applicant Phone:": "અરજદારનો ફોન:",
+                "Applicant Address:": "અરજદારનું સરનામું:",
+                "Application Type:": "અરજી પ્રકાર:",
+                "Additional Info:": "વધારાની માહિતી:",
+                "User ID:": "વપરાશકર્તા આઈડી:",
+                "Submitted Date:": "સબમિટ કરેલ તારીખ:",
+                "View Details": "વિગતો જુઓ",
+                "Are you sure you want to delete this user?": "શું તમે ખરેખર આ વપરાશકર્તાને કાઢી નાખવા માંગો છો?",
+                "Are you sure you want to delete this application?": "શું તમે ખરેખર આ અરજી કાઢી નાખવા માંગો છો?",
+                "Application Details:": "અરજી વિગતો:"
+            },
+            kn: {
+                "Admin Panel": "ನಿರ್ವಾಹಕ ಪ್ಯಾನಲ್",
+                "User Management": "ಬಳಕೆದಾರ ನಿರ್ವಹಣೆ",
+                "Registered Users": "ನೋಂದಾಯಿಸಿದ ಬಳಕೆದಾರರು",
+                "No users registered yet.": "ಇನ್ನೂ ಯಾವುದೇ ಬಳಕೆದಾರರು ನೋಂದಾಯಿಸಿಲ್ಲ.",
+                "Name:": "ಹೆಸರು:",
+                "Email:": "ಇಮೇಲ್:",
+                "Phone:": "ದೂರವಾಣಿ:",
+                "Address:": "ವಿಳಾಸ:",
+                "Registered Date:": "ನೋಂದಾಯಿಸಿದ ದಿನಾಂಕ:",
+                "Delete": "ಅಳಿಸಿ",
+                "Application Management": "ಅರ್ಜಿ ನಿರ್ವಹಣೆ",
+                "Service Applications": "ಸೇವಾ ಅರ್ಜಿಗಳು",
+                "No applications submitted yet.": "ಇನ್ನೂ ಯಾವುದೇ ಅರ್ಜಿಗಳು ಸಲ್ಲಿಸಲಾಗಿಲ್ಲ.",
+                "Applicant Name:": "ಅರ್ಜಿದಾರರ ಹೆಸರು:",
+                "Applicant Email:": "ಅರ್ಜಿದಾರರ ಇಮೇಲ್:",
+                "Applicant Phone:": "ಅರ್ಜಿದಾರರ ದೂರವಾಣಿ:",
+                "Applicant Address:": "ಅರ್ಜಿದಾರರ ವಿಳಾಸ:",
+                "Application Type:": "ಅರ್ಜಿ ಪ್ರಕಾರ:",
+                "Additional Info:": "ಹೆಚ್ಚುವರಿ ಮಾಹಿತಿ:",
+                "User ID:": "ಬಳಕೆದಾರ ಐಡಿ:",
+                "Submitted Date:": "ಸಲ್ಲಿಸಿದ ದಿನಾಂಕ:",
+                "View Details": "ವಿವರಗಳನ್ನು ನೋಡಿ",
+                "Are you sure you want to delete this user?": "ನೀವು ಖಚಿತವಾಗಿ ಈ ಬಳಕೆದಾರನನ್ನು ಅಳಿಸಲು ಬಯಸುತ್ತೀರಾ?",
+                "Are you sure you want to delete this application?": "ನೀವು ಖಚಿತವಾಗಿ ಈ ಅರ್ಜಿಯನ್ನು ಅಳಿಸಲು ಬಯಸುತ್ತೀರಾ?",
+                "Application Details:": "ಅರ್ಜಿ ವಿವರಗಳು:"
+            },
+            or: {
+                "Admin Panel": "ପ୍ରଶାସକ ପ୍ୟାନେଲ୍",
+                "User Management": "ବ୍ୟବହାରକାରୀ ପରିଚାଳନା",
+                "Registered Users": "ପଞ୍ଜୀକୃତ ବ୍ୟବହାରକାରୀ",
+                "No users registered yet.": "ଏପର୍ଯ୍ୟନ୍ତ କୌଣସି ବ୍ୟବହାରକାରୀ ପଞ୍ଜୀକୃତ ହୋଇନାହିଁ।",
+                "Name:": "ନାମ:",
+                "Email:": "ଇମେଲ୍:",
+                "Phone:": "ଫୋନ୍:",
+                "Address:": "ଠିକଣା:",
+                "Registered Date:": "ପଞ୍ଜୀକରଣ ତାରିଖ:",
+                "Delete": "ବିଲୋପ କରନ୍ତୁ",
+                "Application Management": "ଆବେଦନ ପରିଚାଳନା",
+                "Service Applications": "ସେବା ଆବେଦନ",
+                "No applications submitted yet.": "ଏପର୍ଯ୍ୟନ୍ତ କୌଣସି ଆବେଦନ ଦାଖଲ ହୋଇନାହିଁ।",
+                "Applicant Name:": "ଆବେଦକ ନାମ:",
+                "Applicant Email:": "ଆବେଦକ ଇମେଲ୍:",
+                "Applicant Phone:": "ଆବେଦକ ଫୋନ୍:",
+                "Applicant Address:": "ଆବେଦକ ଠିକଣା:",
+                "Application Type:": "ଆବେଦନ ପ୍ରକାର:",
+                "Additional Info:": "ଅତିରିକ୍ତ ସୂଚନା:",
+                "User ID:": "ବ୍ୟବହାରକାରୀ ଆଇଡି:",
+                "Submitted Date:": "ଦାଖଲ ତାରିଖ:",
+                "View Details": "ବିସ୍ତୃତ ବିବରଣୀ ଦେଖନ୍ତୁ",
+                "Are you sure you want to delete this user?": "ଆପଣ ନିଶ୍ଚିତ କି ଏହି ବ୍ୟବହାରକାରୀଙ୍କୁ ବିଲୋପ କରିବାକୁ ଚାହୁଁଛନ୍ତି?",
+                "Are you sure you want to delete this application?": "ଆପଣ ନିଶ୍ଚିତ କି ଏହି ଆବେଦନକୁ ବିଲୋପ କରିବାକୁ ଚାହୁଁଛନ୍ତି?",
+                "Application Details:": "ଆବେଦନ ବିବରଣୀ:"
+            },
+            pa: {
+                "Admin Panel": "ਐਡਮਿਨ ਪੈਨਲ",
+                "User Management": "ਯੂਜ਼ਰ ਮੈਨੇਜਮੈਂਟ",
+                "Registered Users": "ਰਜਿਸਟਰਡ ਯੂਜ਼ਰ",
+                "No users registered yet.": "ਅਜੇ ਤੱਕ ਕੋਈ ਯੂਜ਼ਰ ਰਜਿਸਟਰ ਨਹੀਂ ਹੋਇਆ।",
+                "Name:": "ਨਾਮ:",
+                "Email:": "ਈਮੇਲ:",
+                "Phone:": "ਫੋਨ:",
+                "Address:": "ਐਡਰੈੱਸ:",
+                "Registered Date:": "ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਮਿਤੀ:",
+                "Delete": "ਮਿਟਾਓ",
+                "Application Management": "ਐਪਲੀਕੇਸ਼ਨ ਮੈਨੇਜਮੈਂਟ",
+                "Service Applications": "ਸਰਵਿਸ ਐਪਲੀਕੇਸ਼ਨਾਂ",
+                "No applications submitted yet.": "ਅਜੇ ਤੱਕ ਕੋਈ ਐਪਲੀਕੇਸ਼ਨ ਸਬਮਿਟ ਨਹੀਂ ਹੋਈ।",
+                "Applicant Name:": "ਐਪਲਾਇੰਟ ਦਾ ਨਾਮ:",
+                "Applicant Email:": "ਐਪਲਾਇੰਟ ਦਾ ਈਮੇਲ:",
+                "Applicant Phone:": "ਐਪਲਾਇੰਟ ਦਾ ਫੋਨ:",
+                "Applicant Address:": "ਐਪਲਾਇੰਟ ਦਾ ਐਡਰੈੱਸ:",
+                "Application Type:": "ਐਪਲੀਕੇਸ਼ਨ ਟਾਈਪ:",
+                "Additional Info:": "ਐਡੀਸ਼ਨਲ ਇਨਫੋ:",
+                "User ID:": "ਯੂਜ਼ਰ ਆਈਡੀ:",
+                "Submitted Date:": "ਸਬਮਿਟ ਮਿਤੀ:",
+                "View Details": "ਵੇਖੋ ਵੇਰਵੇ",
+                "Are you sure you want to delete this user?": "ਕੀ ਤੁਸੀਂ ਯਕੀਨੀ ਤੌਰ ਤੇ ਇਸ ਯੂਜ਼ਰ ਨੂੰ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?",
+                "Are you sure you want to delete this application?": "ਕੀ ਤੁਸੀਂ ਯਕੀਨੀ ਤੌਰ ਤੇ ਇਸ ਐਪਲੀਕੇਸ਼ਨ ਨੂੰ ਮਿਟਾਉਣਾ ਚਾਹੁੰਦੇ ਹੋ?",
+                "Application Details:": "ਐਪਲੀਕੇਸ਼ਨ ਵੇਰਵੇ:"
+            },
+            as: {
+                "Admin Panel": "এডমিন পেনেল",
+                "User Management": "ব্যৱহাৰকাৰী ব্যৱস্থাপনা",
+                "Registered Users": "পঞ্জীয়ন কৰা ব্যৱহাৰকাৰীসকল",
+                "No users registered yet.": "এতিয়াও কোনো ব্যৱহাৰকাৰী পঞ্জীয়ন কৰা হোৱা নাই।",
+                "Name:": "নাম:",
+                "Email:": "ইমেইল:",
+                "Phone:": "ফোন:",
+                "Address:": "ঠিকনা:",
+                "Registered Date:": "পঞ্জীয়ন তাৰিখ:",
+                "Delete": "মচি পেলাওক",
+                "Application Management": "আবেদন ব্যৱস্থাপনা",
+                "Service Applications": "সেৱা আবেদনসমূহ",
+                "No applications submitted yet.": "এতিয়াও কোনো আবেদন দাখিল কৰা হোৱা নাই।",
+                "Applicant Name:": "আবেদকৰোঁতাৰ নাম:",
+                "Applicant Email:": "আবেদকৰোঁতাৰ ইমেইল:",
+                "Applicant Phone:": "আবেদকৰোঁতাৰ ফোন:",
+                "Applicant Address:": "আবেদকৰোঁতাৰ ঠিকনা:",
+                "Application Type:": "আবেদনৰ ধৰণ:",
+                "Additional Info:": "অতিৰিক্ত তথ্য:",
+                "User ID:": "ব্যৱহাৰকাৰী আইডি:",
+                "Submitted Date:": "দাখিল কৰা তাৰিখ:",
+                "View Details": "বিৱৰণ চাওক",
+                "Are you sure you want to delete this user?": "আপুনি নিশ্চিত নেকি যে এই ব্যৱহাৰকাৰীজনক মচি পেলাব খোজে?",
+                "Are you sure you want to delete this application?": "আপুনি নিশ্চিত নেকি যে এই আবেদনখন মচি পেলাব খোজে?",
+                "Application Details:": "আবেদনৰ বিৱৰণ:"
+            },
+            ml: {
+                "Admin Panel": "അഡ്മിൻ പാനൽ",
+                "User Management": "ഉപയോക്തൃ മാനേജ്മെന്റ്",
+                "Registered Users": "രജിസ്റ്റർ ചെയ്ത ഉപയോക്താക്കൾ",
+                "No users registered yet.": "ഇതുവരെ ഉപയോക്താക്കളെ രജിസ്റ്റർ ചെയ്തിട്ടില്ല.",
+                "Name:": "പേര്:",
+                "Email:": "ഇമെയിൽ:",
+                "Phone:": "ഫോൺ:",
+                "Address:": "വിലാസം:",
+                "Registered Date:": "രജിസ്റ്റർ ചെയ്ത തീയതി:",
+                "Delete": "ഇല്ലാതാക്കുക",
+                "Application Management": "അപ്ലിക്കേഷൻ മാനേജ്മെന്റ്",
+                "Service Applications": "സർവീസ് അപ്ലിക്കേഷനുകൾ",
+                "No applications submitted yet.": "ഇതുവരെ അപ്ലിക്കേഷനുകൾ സമർപ്പിച്ചിട്ടില്ല.",
+                "Applicant Name:": "അപ്ലയർ പേര്:",
+                "Applicant Email:": "അപ്ലയർ ഇമെയിൽ:",
+                "Applicant Phone:": "അപ്ലയർ ഫോൺ:",
+                "Applicant Address:": "അപ്ലയർ വിലാസം:",
+                "Application Type:": "അപ്ലിക്കേഷൻ തരം:",
+                "Additional Info:": "അധിക വിവരങ്ങൾ:",
+                "User ID:": "ഉപയോക്തൃ ഐഡി:",
+                "Submitted Date:": "സമർപ്പിച്ച തീയതി:",
+                "View Details": "വിശദാംശങ്ങൾ കാണുക",
+                "Are you sure you want to delete this user?": "ഈ ഉപയോക്താവിനെ ഇല്ലാതാക്കണമെന്ന് തീർച്ചയാണോ?",
+                "Are you sure you want to delete this application?": "ഈ അപ്ലിക്കേഷൻ ഇല്ലാതാക്കണമെന്ന് തീർച്ചയാണോ?",
+                "Application Details:": "അപ്ലിക്കേഷൻ വിശദാംശങ്ങൾ:"
+            },
+            ne: {
+                "Admin Panel": "प्रशासन प्यानल",
+                "User Management": "प्रयोगकर्ता व्यवस्थापन",
+                "Registered Users": "दर्ता भएका प्रयोगकर्ताहरू",
+                "No users registered yet.": "अहिलेसम्म कुनै प्रयोगकर्ताहरू दर्ता भएका छैनन्।",
+                "Name:": "नाम:",
+                "Email:": "इमेल:",
+                "Phone:": "फोन:",
+                "Address:": "ठेगाना:",
+                "Registered Date:": "दर्ता मिति:",
+                "Delete": "मेटाउनुहोस्",
+                "Application Management": "आवेदन व्यवस्थापन",
+                "Service Applications": "सेवा आवेदनहरू",
+                "No applications submitted yet.": "अहिलेसम्म कुनै आवेदनहरू पेश भएका छैनन्।",
+                "Applicant Name:": "आवेदकको नाम:",
+                "Applicant Email:": "आवेदकको इमेल:",
+                "Applicant Phone:": "आवेदकको फोन:",
+                "Applicant Address:": "आवेदकको ठेगाना:",
+                "Application Type:": "आवेदन प्रकार:",
+                "Additional Info:": "थप जानकारी:",
+                "User ID:": "प्रयोगकर्ता आईडी:",
+                "Submitted Date:": "पेश गरेको मिति:",
+                "View Details": "विवरणहरू हेर्नुहोस्",
+                "Are you sure you want to delete this user?": "के तपाईँ यो प्रयोगकर्तालाई मेटाउन निश्चित हुनुहुन्छ?",
+                "Are you sure you want to delete this application?": "के तपाईँ यो आवेदन मेटाउन निश्चित हुनुहुन्छ?",
+                "Application Details:": "आवेदन विवरणहरू:"
+            },
+            si: {
+                "Admin Panel": "පරිපාලක පුවරුව",
+                "User Management": "පරිශීලක කළමනාකරණය",
+                "Registered Users": "ලියාපදිංචි පරිශීලකයින්",
+                "No users registered yet.": "තවම කිසිදු පරිශීලකයෙක් ලියාපදිංචි වී නොමැත.",
+                "Name:": "නම:",
+                "Email:": "විද්‍යුත් තැපෑල:",
+                "Phone:": "දුරකථනය:",
+                "Address:": "ලිපිනය:",
+                "Registered Date:": "ලියාපදිංචි දිනය:",
+                "Delete": "මකන්න",
+                "Application Management": "අයදුම් කළමනාකරණය",
+                "Service Applications": "සේවා අයදුම්",
+                "No applications submitted yet.": "තවම කිසිදු අයදුම් ඉදිරිපත් කර නොමැත.",
+                "Applicant Name:": "අයදුම්කරුගේ නම:",
+                "Applicant Email:": "අයදුම්කරුගේ විද්‍යුත් තැපෑල:",
+                "Applicant Phone:": "අයදුම්කරුගේ දුරකථනය:",
+                "Applicant Address:": "අයදුම්කරුගේ ලිපිනය:",
+                "Application Type:": "අයදුම් වර්ගය:",
+                "Additional Info:": "අතිරික්ත තොරතුරු:",
+                "User ID:": "පරිශීලක අංකය:",
+                "Submitted Date:": "ඉදිරිපත් කරන ලද දිනය:",
+                "View Details": "විස්තර බලන්න",
+                "Are you sure you want to delete this user?": "ඔබට මෙම පරිශීලකයා මකා දැමීමට අවශ්‍ය බව විශ්වාසද?",
+                "Are you sure you want to delete this application?": "ඔබට මෙම අයදුම් මකා දැමීමට අවශ්‍ය ඬව විශ්වාසද?",
+                "Application Details:": "අයදුම් විස්තර:"
+            },
+            bn: {
+                "Admin Panel": "অ্যাডমিন প্যানেল",
+                "User Management": "ব্যবহারকারী ব্যবস্থাপনা",
+                "Registered Users": "নিবন্ধিত ব্যবহারকারীরা",
+                "No users registered yet.": "এখনও কোনও ব্যবহারকারী নিবন্ধিত হননি।",
+                "Name:": "নাম:",
+                "Email:": "ইমেল:",
+                "Phone:": "ফোন:",
+                "Address:": "ঠিকানা:",
+                "Registered Date:": "নিবন্ধন তারিখ:",
+                "Delete": "মুছুন",
+                "Application Management": "আবেদন ব্যবস্থাপনা",
+                "Service Applications": "সেবা আবেদন",
+                "No applications submitted yet.": "এখনও কোনও আবেদন জমা দেওয়া হয়নি।",
+                "Applicant Name:": "আবেদনকারীর নাম:",
+                "Applicant Email:": "আবেদনকারীর ইমেল:",
+                "Applicant Phone:": "আবেদনকারীর ফোন:",
+                "Applicant Address:": "আবেদনকারীর ঠিকানা:",
+                "Application Type:": "আবেদনের ধরন:",
+                "Additional Info:": "অতিরিক্ত তথ্য:",
+                "User ID:": "ব্যবহারকারী আইডি:",
+                "Submitted Date:": "জমা দেওয়ার তারিখ:",
+                "View Details": "বিস্তারিত দেখুন",
+                "Are you sure you want to delete this user?": "আপনি কি নিশ্চিত যে আপনি এই ব্যবহারকারীকে মুছতে চান?",
+                "Are you sure you want to delete this application?": "আপনি কি নিশ্চিত যে আপনি এই আবেদনটি মুছতে চান?",
+                "Application Details:": "আবেদনের বিস্তারিত:"
+            }
+        };
+
+        // Apply translation on page load
+        window.addEventListener('load', function() {
+            const savedLanguage = localStorage.getItem('selectedLanguage');
+            if (savedLanguage && savedLanguage !== 'en') {
+                setTimeout(() => {
+                    applyTranslation(savedLanguage);
+                }, 100);
+            }
+        });
+
+        // Function to apply translation
+        function applyTranslation(language) {
+            if (language === 'en') return;
+
+            const langTranslations = translations[language];
+            if (!langTranslations) return;
+
+            // Translate all text content on the page
+            const elements = document.querySelectorAll('*');
+            elements.forEach(element => {
+                if (element.children.length === 0 && element.textContent.trim()) {
+                    const originalText = element.textContent.trim();
+                    if (langTranslations[originalText]) {
+                        element.textContent = langTranslations[originalText];
+                    }
+                }
+            });
+
+            // Translate input placeholders
+            const inputs = document.querySelectorAll('input[placeholder]');
+            inputs.forEach(input => {
+                const placeholder = input.getAttribute('placeholder');
+                if (langTranslations[placeholder]) {
+                    input.setAttribute('placeholder', langTranslations[placeholder]);
+                }
+            });
+
+            // Translate button values
+            const buttons = document.querySelectorAll('button, input[type="submit"]');
+            buttons.forEach(button => {
+                const value = button.value || button.textContent;
+                if (langTranslations[value]) {
+                    if (button.tagName === 'INPUT') {
+                        button.value = langTranslations[value];
+                    } else {
+                        button.textContent = langTranslations[value];
+                    }
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

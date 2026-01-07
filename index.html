@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select a any one of the choice <br> option 1 and option 2</title>
+    <link rel="stylesheet" href="mainindex.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Translator Modal Styles */
+        .translator-modal, .language-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .translator-content, .language-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .translator-content h3, .language-content h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .translator-content p {
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 16px;
+        }
+
+        .translator-buttons, .language-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .translator-btn, .language-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .yes-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .yes-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .no-btn, .cancel-btn {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .no-btn:hover, .cancel-btn:hover {
+            background: #e0e0e0;
+        }
+
+        #languageSelect {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            background: white;
+        }
+
+        #languageSelect:focus {
+            outline: none;
+            border-color: #764ba2;
+        }
+
+        @media (max-width: 480px) {
+            .translator-content, .language-content {
+                padding: 20px;
+                margin: 20px;
+            }
+
+            .translator-buttons, .language-buttons {
+                flex-direction: column;
+            }
+
+            .translator-btn, .language-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-toggle">
+            <button id="userMode" class="toggle-btn active">User Login</button>
+            <button id="adminMode" class="toggle-btn">Admin Login</button>
+        </div>
+        <div id="userForm">
+            <h2>User Login</h2>
+            <form id="loginFormElement" action="#" method="post">
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <div class="password-container">
+                        <input type="password" id="password" name="password" required>
+                        <button type="button" class="toggle-password" data-target="password">👁️</button>
+                    </div>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+            <p style="text-align: center; margin-top: 20px;">
+                <a href="#" id="showRegister" style="color: #667eea; text-decoration: none;">New user? Register here</a>
+            </p>
+        </div>
+        <div id="adminForm" style="display: none;">
+            <h2>Admin Login</h2>
+            <form id="adminLoginForm" action="#" method="post">
+                <div class="form-group">
+                    <label for="adminUsername">Admin Username:</label>
+                    <input type="text" id="adminUsername" name="adminUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="adminPassword">Admin Password:</label>
+                    <div class="password-container">
+                        <input type="password" id="adminPassword" name="adminPassword" required>
+                        <button type="button" class="toggle-password" data-target="adminPassword">👁️</button>
+                    </div>
+                </div>
+                <button type="submit">Admin Login</button>
+            </form>
+        </div>
+        <div id="registerForm" style="display: none;">
+            <h2>Register</h2>
+            <form id="registerFormElement" action="#" method="post">
+                <div class="form-group">
+                    <label for="regUsername">Username:</label>
+                    <input type="text" id="regUsername" name="regUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Password:</label>
+                    <div class="password-container">
+                        <input type="password" id="regPassword" name="regPassword" required>
+                        <button type="button" class="toggle-password" data-target="regPassword">👁️</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password:</label>
+                    <div class="password-container">
+                        <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        <button type="button" class="toggle-password" data-target="confirmPassword">👁️</button>
+                    </div>
+                </div>
+                <button type="submit">Register</button>
+            </form>
+            <p style="text-align: center; margin-top: 20px;">
+                <a href="#" id="showLogin" style="color: #667eea; text-decoration: none;">Already have an account? Login here</a>
+            </p>
+        </div>
+        <div id="message" style="margin-top: 20px; text-align: center; color: red;"></div>
+    </div>
+
+    <!-- Translator Modal -->
+    <div id="translatorModal" class="translator-modal">
+        <div class="translator-content">
+            <h3>🌐 Language Translator</h3>
+            <p>Would you like to translate this website to another language?</p>
+            <div class="translator-buttons">
+                <button id="enableTranslator" class="translator-btn yes-btn">Yes, enable translator</button>
+                <button id="disableTranslator" class="translator-btn no-btn">No, keep English</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Language Selector Modal -->
+    <div id="languageModal" class="language-modal" style="display: none;">
+        <div class="language-content">
+            <h3>Select Your Language</h3>
+            <select id="languageSelect">
+                <option value="en">English</option>
+                <option value="hi">हिंदी (Hindi)</option>
+                <option value="te">తెలుగు (Telugu)</option>
+                <option value="mr">मराठी (Marathi)</option>
+                <option value="ta">தமிழ் (Tamil)</option>
+                <option value="ur">اردو (Urdu)</option>
+                <option value="gu">ગુજરાતી (Gujarati)</option>
+                <option value="kn">ಕನ್ನಡ (Kannada)</option>
+                <option value="or">ଓଡ଼ିଆ (Odia)</option>
+                <option value="pa">ਪੰਜਾਬੀ (Punjabi)</option>
+                <option value="as">অসমীয়া (Assamese)</option>
+                <option value="ml">മലയാളം (Malayalam)</option>
+                <option value="ne">नेपाली (Nepali)</option>
+                <option value="si">සිංහල (Sinhala)</option>
+                <option value="bn">বাংলা (Bengali)</option>
+            </select>
+            <div class="language-buttons">
+                <button id="applyLanguage" class="language-btn">Apply Translation</button>
+                <button id="cancelLanguage" class="language-btn cancel-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Toggle between user and admin modes
+        document.getElementById('userMode').addEventListener('click', function() {
+            document.getElementById('userMode').classList.add('active');
+            document.getElementById('adminMode').classList.remove('active');
+            document.getElementById('userForm').style.display = 'block';
+            document.getElementById('adminForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('message').textContent = '';
+        });
+
+        document.getElementById('adminMode').addEventListener('click', function() {
+            document.getElementById('adminMode').classList.add('active');
+            document.getElementById('userMode').classList.remove('active');
+            document.getElementById('adminForm').style.display = 'block';
+            document.getElementById('userForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('message').textContent = '';
+        });
+
+        // Toggle between login and register forms
+        document.getElementById('showRegister').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('userForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+            document.getElementById('message').textContent = '';
+        });
+
+        document.getElementById('showLogin').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('userForm').style.display = 'block';
+            document.getElementById('message').textContent = '';
+        });
+
+        // Get users from localStorage
+        function getUsers() {
+            const users = localStorage.getItem('users');
+            return users ? JSON.parse(users) : [];
+        }
+
+        // Save users to localStorage
+        function saveUsers(users) {
+            localStorage.setItem('users', JSON.stringify(users));
+        }
+
+        // User login form submission
+        document.getElementById('loginFormElement').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const message = document.getElementById('message');
+            
+            const users = getUsers();
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                message.style.color = 'green';
+                message.textContent = 'Login successful!';
+                sessionStorage.setItem('currentUser', username);
+                setTimeout(() => {
+                    window.location.href = 'options.html';
+                }, 1000);
+            } else {
+                message.style.color = 'red';
+                message.textContent = 'Invalid username or password.';
+            }
+        });
+
+        // Admin login form submission
+        document.getElementById('adminLoginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+            const message = document.getElementById('message');
+            
+            // Hardcoded admin credentials
+            if (username === 'ADMINNANI' && password === 'ADMINNANI') {
+                message.style.color = 'green';
+                message.textContent = 'Admin login successful!';
+                sessionStorage.setItem('currentUser', username);
+                setTimeout(() => {
+                    window.location.href = 'admin.html';
+                }, 1000);
+            } else {
+                message.style.color = 'red';
+                message.textContent = 'Invalid admin credentials.';
+            }
+        });
+
+        // Register form submission
+        document.getElementById('registerFormElement').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const username = document.getElementById('regUsername').value;
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const message = document.getElementById('message');
+            
+            // Username validation
+            if (username.length < 8) {
+                message.style.color = 'red';
+                message.textContent = 'Username must be at least 8 characters long.';
+                return;
+            }
+            
+            // Strong password validation
+            const hasNumber = /\d/.test(password);
+            const hasSpecial = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password);
+            const isLongEnough = password.length >= 8;
+            
+            if (!isLongEnough) {
+                message.style.color = 'red';
+                message.textContent = 'Password must be at least 8 characters long.';
+                return;
+            }
+            if (!hasNumber) {
+                message.style.color = 'red';
+                message.textContent = 'Password must contain at least one number.';
+                return;
+            }
+            if (!hasSpecial) {
+                message.style.color = 'red';
+                message.textContent = 'Password must contain at least one special character.';
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                message.style.color = 'red';
+                message.textContent = 'Passwords do not match.';
+                return;
+            }
+            
+            const users = getUsers();
+            const existingUser = users.find(u => u.username === username);
+            
+            if (existingUser || username === 'ADMINNANI') {
+                message.style.color = 'red';
+                message.textContent = username === 'ADMINNANI' ? 'Cannot register as admin.' : 'Username already exists.';
+                return;
+            }
+            
+            users.push({ username, password });
+            saveUsers(users);
+            
+            message.style.color = 'green';
+            message.textContent = 'Registration successful! You can now login.';
+            setTimeout(() => {
+                document.getElementById('registerForm').style.display = 'none';
+                document.getElementById('userForm').style.display = 'block';
+                document.getElementById('message').textContent = '';
+            }, 2000);
+        });
+
+        // Password toggle functionality
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('toggle-password')) {
+                const targetId = e.target.getAttribute('data-target');
+                const input = document.getElementById(targetId);
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    e.target.textContent = '🙈';
+                } else {
+                    input.type = 'password';
+                    e.target.textContent = '👁️';
+                }
+            }
+        });
+
+        // Translator functionality
+        const translations = {
+            hi: {
+                "User Login": "उपयोगकर्ता लॉगिन",
+                "Admin Login": "एडमिन लॉगिन",
+                "User Login": "उपयोगकर्ता लॉगिन",
+                "Username:": "उपयोगकर्ता नाम:",
+                "Password:": "पासवर्ड:",
+                "Login": "लॉगिन",
+                "New user? Register here": "नया उपयोगकर्ता? यहां पंजीकरण करें",
+                "Admin Login": "एडमिन लॉगिन",
+                "Admin Username:": "एडमिन उपयोगकर्ता नाम:",
+                "Admin Password:": "एडमिन पासवर्ड:",
+                "Admin Login": "एडमिन लॉगिन",
+                "Register": "पंजीकरण",
+                "Username:": "उपयोगकर्ता नाम:",
+                "Password:": "पासवर्ड:",
+                "Confirm Password:": "पासवर्ड की पुष्टि करें:",
+                "Register": "पंजीकरण",
+                "Already have an account? Login here": "पहले से खाता है? यहां लॉगिन करें",
+                "Select a any one of the choice": "कोई एक विकल्प चुनें",
+                "option 1 and option 2": "विकल्प 1 और विकल्प 2",
+                "Language Translator": "भाषा अनुवादक",
+                "Would you like to translate this website to another language?": "क्या आप इस वेबसाइट को दूसरी भाषा में अनुवाद करना चाहेंगे?",
+                "Yes, enable translator": "हाँ, अनुवादक सक्षम करें",
+                "No, keep English": "नहीं, अंग्रेजी रखें",
+                "Select Your Language": "अपनी भाषा चुनें",
+                "Apply Translation": "अनुवाद लागू करें",
+                "Cancel": "रद्द करें"
+            },
+            te: {
+                "User Login": "వినియోగదారు లాగిన్",
+                "Admin Login": "అడ్మిన్ లాగిన్",
+                "Username:": "వినియోగదారు పేరు:",
+                "Password:": "పాస్‌వర్డ్:",
+                "Login": "లాగిన్",
+                "New user? Register here": "కొత్త వినియోగదారు? ఇక్కడ నమోదు చేయండి",
+                "Admin Username:": "అడ్మిన్ వినియోగదారు పేరు:",
+                "Admin Password:": "అడ్మిన్ పాస్‌వర్డ్:",
+                "Register": "నమోదు",
+                "Confirm Password:": "పాస్‌వర్డ్ నిర్ధారించండి:",
+                "Already have an account? Login here": "ఇప్పటికే ఖాతా ఉందా? ఇక్కడ లాగిన్ చేయండి",
+                "Select a any one of the choice": "ఎంచుకోండి ఎంచుకోండి",
+                "option 1 and option 2": "ఎంపిక 1 మరియు ఎంపిక 2",
+                "Language Translator": "భాషా అనువాదకం",
+                "Would you like to translate this website to another language?": "ఈ వెబ్‌సైట్‌ను మరొక భాషకు అనువదించాలనుకుంటున్నారా?",
+                "Yes, enable translator": "అవును, అనువాదకాన్ని ప్రారంభించు",
+                "No, keep English": "లేదు, ఇంగ్లీష్‌ను ఉంచు",
+                "Select Your Language": "మీ భాషను ఎంచుకోండి",
+                "Apply Translation": "అనువాదాన్ని వర్తింపజేయి",
+                "Cancel": "రద్దు చేయి"
+            },
+            mr: {
+                "User Login": "वापरकर्ता लॉगिन",
+                "Admin Login": "अॅडमिन लॉगिन",
+                "Username:": "वापरकर्तानाव:",
+                "Password:": "पासवर्ड:",
+                "Login": "लॉगिन",
+                "New user? Register here": "नवीन वापरकर्ता? येथे नोंदणी करा",
+                "Admin Username:": "अॅडमिन वापरकर्तानाव:",
+                "Admin Password:": "अॅडमिन पासवर्ड:",
+                "Register": "नोंदणी",
+                "Confirm Password:": "पासवर्डची पुष्टी करा:",
+                "Already have an account? Login here": "आधीपासून खाते आहे? येथे लॉगिन करा",
+                "Select a any one of the choice": "कोणताही एक पर्याय निवडा",
+                "option 1 and option 2": "पर्याय 1 आणि पर्याय 2",
+                "Language Translator": "भाषा अनुवादक",
+                "Would you like to translate this website to another language?": "तुम्हाला ही वेबसाइट दुसऱ्या भाषेत अनुवादित करायची आहे का?",
+                "Yes, enable translator": "होय, अनुवादक सक्षम करा",
+                "No, keep English": "नाही, इंग्रजी ठेवा",
+                "Select Your Language": "तुमची भाषा निवडा",
+                "Apply Translation": "अनुवाद लागू करा",
+                "Cancel": "रद्द करा"
+            },
+            ta: {
+                "User Login": "பயனர் உள்நுழைவு",
+                "Admin Login": "நிர்வாகி உள்நுழைவு",
+                "Username:": "பயனர் பெயர்:",
+                "Password:": "கடவுச்சொல்:",
+                "Login": "உள்நுழை",
+                "New user? Register here": "புதிய பயனரா? இங்கே பதிவு செய்யவும்",
+                "Admin Username:": "நிர்வாகி பயனர் பெயர்:",
+                "Admin Password:": "நிர்வாகி கடவுச்சொல்:",
+                "Register": "பதிவு செய்",
+                "Confirm Password:": "கடவுச்சொல்லை உறுதிப்படுத்து:",
+                "Already have an account? Login here": "ஏற்கனவே கணக்கு இருக்கிறதா? இங்கே உள்நுழையவும்",
+                "Select a any one of the choice": "எந்த ஒரு தேர்வையும் தேர்ந்தெடுக்கவும்",
+                "option 1 and option 2": "விருப்பம் 1 மற்றும் விருப்பம் 2",
+                "Language Translator": "மொழி மொழிபெயர்ப்பாளர்",
+                "Would you like to translate this website to another language?": "இந்த இணையதளத்தை மற்றொரு மொழியில் மொழிபெயர்க்க விரும்புகிறீர்களா?",
+                "Yes, enable translator": "ஆம், மொழிபெயர்ப்பாளரை இயக்கு",
+                "No, keep English": "இல்லை, ஆங்கிலத்தை வைத்திரு",
+                "Select Your Language": "உங்கள் மொழியைத் தேர்ந்தெடுக்கவும்",
+                "Apply Translation": "மொழிபெயர்ப்பைப் பயன்படுத்து",
+                "Cancel": "ரத்து செய்"
+            },
+            ur: {
+                "User Login": "صارف لاگ ان",
+                "Admin Login": "ایڈمن لاگ ان",
+                "Username:": "صارف نام:",
+                "Password:": "پاس ورڈ:",
+                "Login": "لاگ ان",
+                "New user? Register here": "نیا صارف؟ یہاں رجسٹر کریں",
+                "Admin Username:": "ایڈمن صارف نام:",
+                "Admin Password:": "ایڈمن پاس ورڈ:",
+                "Register": "رجسٹر",
+                "Confirm Password:": "پاس ورڈ کی تصدیق کریں:",
+                "Already have an account? Login here": "پہلے سے اکاؤنٹ ہے؟ یہاں لاگ ان کریں",
+                "Select a any one of the choice": "کوئی ایک انتخاب منتخب کریں",
+                "option 1 and option 2": "اختیار 1 اور اختیار 2",
+                "Language Translator": "زبان ترجمہ کار",
+                "Would you like to translate this website to another language?": "کیا آپ اس ویب سائٹ کو دوسری زبان میں ترجمہ کرنا چاہیں گے؟",
+                "Yes, enable translator": "ہاں، ترجمہ کار فعال کریں",
+                "No, keep English": "نہیں، انگریزی رکھیں",
+                "Select Your Language": "اپنی زبان منتخب کریں",
+                "Apply Translation": "ترجمہ لاگو کریں",
+                "Cancel": "منسوخ کریں"
+            },
+            gu: {
+                "User Login": "વપરાશકર્તા લૉગિન",
+                "Admin Login": "એડમિન લૉગિન",
+                "Username:": "વપરાશકર્તા નામ:",
+                "Password:": "પાસવર્ડ:",
+                "Login": "લૉગિન",
+                "New user? Register here": "નવો વપરાશકર્તા? અહીં નોંધણી કરો",
+                "Admin Username:": "એડમિન વપરાશકર્તા નામ:",
+                "Admin Password:": "એડમિન પાસવર્ડ:",
+                "Register": "નોંધણી",
+                "Confirm Password:": "પાસવર્ડની પુષ્ટિ કરો:",
+                "Already have an account? Login here": "પહેલેથી ખાતું છે? અહીં લૉગિન કરો",
+                "Select a any one of the choice": "કોઈ એક પસંદગી પસંદ કરો",
+                "option 1 and option 2": "વિકલ્પ 1 અને વિકલ્પ 2",
+                "Language Translator": "ભાષા અનુવાદક",
+                "Would you like to translate this website to another language?": "શું તમે આ વેબસાઇટને બીજી ભાષામાં અનુવાદ કરવા માંગો છો?",
+                "Yes, enable translator": "હા, અનુવાદક સક્ષમ કરો",
+                "No, keep English": "ના, અંગ્રેજી રાખો",
+                "Select Your Language": "તમારી ભાષા પસંદ કરો",
+                "Apply Translation": "અનુવાદ લાગુ કરો",
+                "Cancel": "રદ કરો"
+            },
+            kn: {
+                "User Login": "ಬಳಕೆದಾರ ಲಾಗಿನ್",
+                "Admin Login": "ಅಡ್ಮಿನ್ ಲಾಗಿನ್",
+                "Username:": "ಬಳಕೆದಾರ ಹೆಸರು:",
+                "Password:": "ಪಾಸ್‌ವರ್ಡ್:",
+                "Login": "ಲಾಗಿನ್",
+                "New user? Register here": "ಹೊಸ ಬಳಕೆದಾರ? ಇಲ್ಲಿ ನೋಂದಣಿ ಮಾಡಿ",
+                "Admin Username:": "ಅಡ್ಮಿನ್ ಬಳಕೆದಾರ ಹೆಸರು:",
+                "Admin Password:": "ಅಡ್ಮಿನ್ ಪಾಸ್‌ವರ್ಡ್:",
+                "Register": "ನೋಂದಣಿ",
+                "Confirm Password:": "ಪಾಸ್‌ವರ್ಡ್ ದೃಢೀಕರಿಸಿ:",
+                "Already have an account? Login here": "ಈಗಾಗಲೇ ಖಾತೆ ಇದೆಯೇ? ಇಲ್ಲಿ ಲಾಗಿನ್ ಮಾಡಿ",
+                "Select a any one of the choice": "ಯಾವುದೇ ಒಂದು ಆಯ್ಕೆಯನ್ನು ಆಯ್ಕೆ ಮಾಡಿ",
+                "option 1 and option 2": "ಆಯ್ಕೆ 1 ಮತ್ತು ಆಯ್ಕೆ 2",
+                "Language Translator": "ಭಾಷಾ ಅನುವಾದಕ",
+                "Would you like to translate this website to another language?": "ಈ ವೆಬ್‌ಸೈಟ್ ಅನ್ನು ಬೇರೆ ಭಾಷೆಗೆ ಅನುವಾದಿಸಲು ನೀವು ಬಯಸುತ್ತೀರಾ?",
+                "Yes, enable translator": "ಹೌದು, ಅನುವಾದಕವನ್ನು ಸಕ್ರಿಯಗೊಳಿಸಿ",
+                "No, keep English": "ಇಲ್ಲ, ಇಂಗ್ಲಿಷ್ ಇರಿಸಿ",
+                "Select Your Language": "ನಿಮ್ಮ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆ ಮಾಡಿ",
+                "Apply Translation": "ಅನುವಾದವನ್ನು ಅನ್ವಯಿಸಿ",
+                "Cancel": "ರದ್ದುಗೊಳಿಸಿ"
+            },
+            or: {
+                "User Login": "ବ୍ୟବହାରକାରୀ ଲଗଇନ୍",
+                "Admin Login": "ଆଡମିନ୍ ଲଗଇନ୍",
+                "Username:": "ବ୍ୟବହାରକାରୀ ନାମ:",
+                "Password:": "ପାସୱାର୍ଡ:",
+                "Login": "ଲଗଇନ୍",
+                "New user? Register here": "ନୂତନ ବ୍ୟବହାରକାରୀ? ଏଠାରେ ପଞ୍ଜିକରଣ କରନ୍ତୁ",
+                "Admin Username:": "ଆଡମିନ୍ ବ୍ୟବହାରକାରୀ ନାମ:",
+                "Admin Password:": "ଆଡମିନ୍ ପାସୱାର୍ଡ:",
+                "Register": "ପଞ୍ଜିକରଣ",
+                "Confirm Password:": "ପାସୱାର୍ଡ ନିଶ୍ଚିତ କରନ୍ତୁ:",
+                "Already have an account? Login here": "ପୂର୍ବରୁ ଖାତା ଅଛି? ଏଠାରେ ଲଗଇନ୍ କରନ୍ତୁ",
+                "Select a any one of the choice": "ଯେକୌଣସି ଗୋଟିଏ ବିକଳ୍ପ ବାଛନ୍ତୁ",
+                "option 1 and option 2": "ବିକଳ୍ପ 1 ଏବଂ ବିକଳ୍ପ 2",
+                "Language Translator": "ଭାଷା ଅନୁବାଦକ",
+                "Would you like to translate this website to another language?": "ଆପଣ ଏହି ୱେବସାଇଟକୁ ଅନ୍ୟ ଭାଷାରେ ଅନୁବାଦ କରିବାକୁ ଚାହାନ୍ତି କି?",
+                "Yes, enable translator": "ହଁ, ଅନୁବାଦକ ସକ୍ଷମ କରନ୍ତୁ",
+                "No, keep English": "ନା, ଇଂରାଜୀ ରଖନ୍ତୁ",
+                "Select Your Language": "ଆପଣଙ୍କ ଭାଷା ବାଛନ୍ତୁ",
+                "Apply Translation": "ଅନୁବାଦ ପ୍ରୟୋଗ କରନ୍ତୁ",
+                "Cancel": "ବାତିଲ୍ କରନ୍ତୁ"
+            },
+            pa: {
+                "User Login": "ਉਪਭੋਗਤਾ ਲੌਗਇਨ",
+                "Admin Login": "ਐਡਮਿਨ ਲੌਗਇਨ",
+                "Username:": "ਉਪਭੋਗਤਾ ਨਾਮ:",
+                "Password:": "ਪਾਸਵਰਡ:",
+                "Login": "ਲੌਗਇਨ",
+                "New user? Register here": "ਨਵਾਂ ਉਪਭੋਗਤਾ? ਇੱਥੇ ਰਜਿਸਟਰ ਕਰੋ",
+                "Admin Username:": "ਐਡਮਿਨ ਉਪਭੋਗਤਾ ਨਾਮ:",
+                "Admin Password:": "ਐਡਮਿਨ ਪਾਸਵਰਡ:",
+                "Register": "ਰਜਿਸਟਰ",
+                "Confirm Password:": "ਪਾਸਵਰਡ ਦੀ ਪੁਸ਼ਟੀ ਕਰੋ:",
+                "Already have an account? Login here": "ਪਹਿਲਾਂ ਤੋਂ ਖਾਤਾ ਹੈ? ਇੱਥੇ ਲੌਗਇਨ ਕਰੋ",
+                "Select a any one of the choice": "ਕੋਈ ਵੀ ਇੱਕ ਚੋਣ ਕਰੋ",
+                "option 1 and option 2": "ਵਿਕਲਪ 1 ਅਤੇ ਵਿਕਲਪ 2",
+                "Language Translator": "ਭਾਸ਼ਾ ਅਨੁਵਾਦਕ",
+                "Would you like to translate this website to another language?": "ਕੀ ਤੁਸੀਂ ਇਸ ਵੈਬਸਾਈਟ ਨੂੰ ਹੋਰ ਭਾਸ਼ਾ ਵਿੱਚ ਅਨੁਵਾਦ ਕਰਨਾ ਚਾਹੁੰਦੇ ਹੋ?",
+                "Yes, enable translator": "ਹਾਂ, ਅਨੁਵਾਦਕ ਸਮਰੱਥ ਕਰੋ",
+                "No, keep English": "ਨਹੀਂ, ਅੰਗਰੇਜ਼ੀ ਰੱਖੋ",
+                "Select Your Language": "ਆਪਣੀ ਭਾਸ਼ਾ ਚੁਣੋ",
+                "Apply Translation": "ਅਨੁਵਾਦ ਲਾਗੂ ਕਰੋ",
+                "Cancel": "ਰੱਦ ਕਰੋ"
+            },
+            as: {
+                "User Login": "ব্যৱহাৰকাৰী লগিন",
+                "Admin Login": "এডমিন লগিন",
+                "Username:": "ব্যৱহাৰকাৰী নাম:",
+                "Password:": "পাছৱৰ্ড:",
+                "Login": "লগিন",
+                "New user? Register here": "নতুন ব্যৱহাৰকাৰী? ইয়াত পঞ্জীয়ন কৰক",
+                "Admin Username:": "এডমিন ব্যৱহাৰকাৰী নাম:",
+                "Admin Password:": "এডমিন পাছৱৰ্ড:",
+                "Register": "পঞ্জীয়ন",
+                "Confirm Password:": "পাছৱৰ্ড নিশ্চিত কৰক:",
+                "Already have an account? Login here": "ইতিমধ্যে একাউণ্ট আছে? ইয়াত লগিন কৰক",
+                "Select a any one of the choice": "যিকোনো এটা বাছনি বাছক",
+                "option 1 and option 2": "বিকল্প 1 আৰু বিকল্প 2",
+                "Language Translator": "ভাষা অনুবাদক",
+                "Would you like to translate this website to another language?": "আপুনি এই ৱেবচাইটখন অন্য ভাষাত অনুবাদ কৰিব খোজে নেকি?",
+                "Yes, enable translator": "হয়, অনুবাদক সক্ষম কৰক",
+                "No, keep English": "নহয়, ইংৰাজী ৰাখক",
+                "Select Your Language": "আপোনাৰ ভাষা বাছক",
+                "Apply Translation": "অনুবাদ প্ৰয়োগ কৰক",
+                "Cancel": "বাতিল কৰক"
+            },
+            ml: {
+                "User Login": "ഉപയോക്താവ് ലോഗിൻ",
+                "Admin Login": "അഡ്മിൻ ലോഗിൻ",
+                "Username:": "ഉപയോക്തൃനാമം:",
+                "Password:": "പാസ്‌വേഡ്:",
+                "Login": "ലോഗിൻ",
+                "New user? Register here": "പുതിയ ഉപയോക്താവ്? ഇവിടെ രജിസ്റ്റർ ചെയ്യുക",
+                "Admin Username:": "അഡ്മിൻ ഉപയോക്തൃനാമം:",
+                "Admin Password:": "അഡ്മിൻ പാസ്‌വേഡ്:",
+                "Register": "രജിസ്റ്റർ",
+                "Confirm Password:": "പാസ്‌വേഡ് സ്ഥിരീകരിക്കുക:",
+                "Already have an account? Login here": "ഇതിനകം അക്കൗണ്ട് ഉണ്ടോ? ഇവിടെ ലോഗിൻ ചെയ്യുക",
+                "Select a any one of the choice": "ഏതെങ്കിലും ഒരു തിരഞ്ഞെടുപ്പ് തിരഞ്ഞെടുക്കുക",
+                "option 1 and option 2": "ഓപ്ഷൻ 1 മറ്റും ഓപ്ഷൻ 2",
+                "Language Translator": "ഭാഷാ പരിഭാഷകൻ",
+                "Would you like to translate this website to another language?": "ഈ വെബ്സൈറ്റ് മറ്റൊരു ഭാഷയിലേക്ക് പരിഭാഷപ്പെടുത്താൻ നിങ്ങൾക്ക് ആഗ്രഹമുണ്ടോ?",
+                "Yes, enable translator": "അതെ, പരിഭാഷകൻ പ്രവർത്തനക്ഷമമാക്കുക",
+                "No, keep English": "ഇല്ല, ഇംഗ്ലീഷ് നിലനിർത്തുക",
+                "Select Your Language": "നിങ്ങളുടെ ഭാഷ തിരഞ്ഞെടുക്കുക",
+                "Apply Translation": "പരിഭാഷ പ്രയോഗിക്കുക",
+                "Cancel": "റദ്ദാക്കുക"
+            },
+            ne: {
+                "User Login": "प्रयोगकर्ता लगइन",
+                "Admin Login": "एडमिन लगइन",
+                "Username:": "प्रयोगकर्ता नाम:",
+                "Password:": "पासवर्ड:",
+                "Login": "लगइन",
+                "New user? Register here": "नयाँ प्रयोगकर्ता? यहाँ दर्ता गर्नुहोस्",
+                "Admin Username:": "एडमिन प्रयोगकर्ता नाम:",
+                "Admin Password:": "एडमिन पासवर्ड:",
+                "Register": "दर्ता",
+                "Confirm Password:": "पासवर्ड पुष्टि गर्नुहोस्:",
+                "Already have an account? Login here": "पहिल्यै खाता छ? यहाँ लगइन गर्नुहोस्",
+                "Select a any one of the choice": "कुनै एक विकल्प चयन गर्नुहोस्",
+                "option 1 and option 2": "विकल्प 1 र विकल्प 2",
+                "Language Translator": "भाषा अनुवादक",
+                "Would you like to translate this website to another language?": "के तपाईं यो वेबसाइटलाई अर्को भाषामा अनुवाद गर्न चाहनुहुन्छ?",
+                "Yes, enable translator": "हो, अनुवादक सक्षम गर्नुहोस्",
+                "No, keep English": "होइन, अंग्रेजी राख्नुहोस्",
+                "Select Your Language": "आफ्नो भाषा चयन गर्नुहोस्",
+                "Apply Translation": "अनुवाद लागू गर्नुहोस्",
+                "Cancel": "रद्द गर्नुहोस्"
+            },
+            si: {
+                "User Login": "පරිශීලක පිවිසුම",
+                "Admin Login": "පරිපාලක පිවිසුම",
+                "Username:": "පරිශීලක නම:",
+                "Password:": "මුරපදය:",
+                "Login": "පිවිසුම",
+                "New user? Register here": "නව පරිශීලකයෙක්ද? මෙහි ලියාපදිංචි වන්න",
+                "Admin Username:": "පරිපාලක පරිශීලක නම:",
+                "Admin Password:": "පරිපාලක මුරපදය:",
+                "Register": "ලියාපදිංචි වන්න",
+                "Confirm Password:": "මුරපදය තහවුරු කරන්න:",
+                "Already have an account? Login here": "දැනටමත් ගිණුමක් තියෙනවද? මෙහි පිවිසෙන්න",
+                "Select a any one of the choice": "ඕනෑම තේරීමක් තෝරන්න",
+                "option 1 and option 2": "විකල්පය 1 සහ විකල්පය 2",
+                "Language Translator": "භාෂා පරිවර්තකයා",
+                "Would you like to translate this website to another language?": "ඔබට මෙම වෙබ් අඩවිය වෙනත් භාෂාවකට පරිවර්තනය කිරීමට අවශ්‍යද?",
+                "Yes, enable translator": "ඔව්, පරිවර්තකයා සක්‍රිය කරන්න",
+                "No, keep English": "නැත, ඉංග්‍රීසි තබා ගන්න",
+                "Select Your Language": "ඔබේ භාෂාව තෝරන්න",
+                "Apply Translation": "පරිවර්තනය යෙදීම",
+                "Cancel": "අවලංගු කරන්න"
+            },
+            bn: {
+                "User Login": "ব্যবহারকারী লগইন",
+                "Admin Login": "অ্যাডমিন লগইন",
+                "Username:": "ব্যবহারকারী নাম:",
+                "Password:": "পাসওয়ার্ড:",
+                "Login": "লগইন",
+                "New user? Register here": "নতুন ব্যবহারকারী? এখানে নিবন্ধন করুন",
+                "Admin Username:": "অ্যাডমিন ব্যবহারকারী নাম:",
+                "Admin Password:": "অ্যাডমিন পাসওয়ার্ড:",
+                "Register": "নিবন্ধন",
+                "Confirm Password:": "পাসওয়ার্ড নিশ্চিত করুন:",
+                "Already have an account? Login here": "ইতিমধ্যে একটি অ্যাকাউন্ট আছে? এখানে লগইন করুন",
+                "Select a any one of the choice": "যেকোনো একটি পছন্দ নির্বাচন করুন",
+                "option 1 and option 2": "বিকল্প 1 এবং বিকল্প 2",
+                "Language Translator": "ভাষা অনুবাদক",
+                "Would you like to translate this website to another language?": "আপনি কি এই ওয়েবসাইটটি অন্য ভাষায় অনুবাদ করতে চান?",
+                "Yes, enable translator": "হ্যাঁ, অনুবাদক সক্ষম করুন",
+                "No, keep English": "না, ইংরেজি রাখুন",
+                "Select Your Language": "আপনার ভাষা নির্বাচন করুন",
+                "Apply Translation": "অনুবাদ প্রয়োগ করুন",
+                "Cancel": "বাতিল করুন"
+            }
+        };
+
+        // Initialize translator on page load
+        window.addEventListener('load', function() {
+            const savedLanguage = localStorage.getItem('selectedLanguage');
+            if (savedLanguage && savedLanguage !== 'en') {
+                setTimeout(() => {
+                    applyTranslation(savedLanguage);
+                }, 500);
+            } else {
+                // Show translator modal if no language preference is saved
+                setTimeout(() => {
+                    document.getElementById('translatorModal').style.display = 'flex';
+                }, 1000);
+            }
+        });
+
+        // Translator modal event listeners
+        document.getElementById('enableTranslator').addEventListener('click', function() {
+            document.getElementById('translatorModal').style.display = 'none';
+            document.getElementById('languageModal').style.display = 'flex';
+        });
+
+        document.getElementById('disableTranslator').addEventListener('click', function() {
+            document.getElementById('translatorModal').style.display = 'none';
+            localStorage.setItem('translatorEnabled', 'false');
+        });
+
+        // Language selection modal event listeners
+        document.getElementById('applyLanguage').addEventListener('click', function() {
+            const selectedLanguage = document.getElementById('languageSelect').value;
+            localStorage.setItem('selectedLanguage', selectedLanguage);
+            localStorage.setItem('translatorEnabled', 'true');
+            document.getElementById('languageModal').style.display = 'none';
+            applyTranslation(selectedLanguage);
+        });
+
+        document.getElementById('cancelLanguage').addEventListener('click', function() {
+            document.getElementById('languageModal').style.display = 'none';
+            document.getElementById('translatorModal').style.display = 'flex';
+        });
+
+        // Function to apply translation
+        function applyTranslation(language) {
+            if (language === 'en') return;
+
+            const langTranslations = translations[language];
+            if (!langTranslations) return;
+
+            // Translate all text content on the page
+            const elements = document.querySelectorAll('*');
+            elements.forEach(element => {
+                if (element.children.length === 0 && element.textContent.trim()) {
+                    const originalText = element.textContent.trim();
+                    if (langTranslations[originalText]) {
+                        element.textContent = langTranslations[originalText];
+                    }
+                }
+            });
+
+            // Translate input placeholders
+            const inputs = document.querySelectorAll('input[placeholder]');
+            inputs.forEach(input => {
+                const placeholder = input.getAttribute('placeholder');
+                if (langTranslations[placeholder]) {
+                    input.setAttribute('placeholder', langTranslations[placeholder]);
+                }
+            });
+
+            // Translate button values
+            const buttons = document.querySelectorAll('button, input[type="submit"]');
+            buttons.forEach(button => {
+                const value = button.value || button.textContent;
+                if (langTranslations[value]) {
+                    if (button.tagName === 'INPUT') {
+                        button.value = langTranslations[value];
+                    } else {
+                        button.textContent = langTranslations[value];
+                    }
+                }
+            });
+
+            // Store current language for other pages
+            sessionStorage.setItem('currentLanguage', language);
+        }
+
+        // Function to get current language
+        function getCurrentLanguage() {
+            return localStorage.getItem('selectedLanguage') || 'en';
+        }
+    </script>
+</body>
+</html>
+

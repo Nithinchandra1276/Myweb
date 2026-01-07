@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Options</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #d48e8e 0%, #795899 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .options-container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 50px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 40px;
+            font-size: 36px;
+        }
+
+        .option-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .option-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 20px;
+            padding: 30px 40px;
+            background: linear-gradient(135deg, #cfe53f 0%, #cf6161 100%);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            min-height: 120px;
+            text-align: center;
+        }
+
+        .option-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .option-button:nth-child(2) {
+            background: linear-gradient(135deg, #054e4a 0%, #8e6746 100%);
+        }
+
+        .option-title {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .option-desc {
+            font-size: 14px;
+            font-weight: 400;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 480px) {
+            .options-container {
+                padding: 30px 20px;
+            }
+            h1 {
+                font-size: 28px;
+            }
+            .option-wrapper {
+                gap: 15px;
+            }
+            .option-button {
+                margin: 10px 0;
+                padding: 20px 30px;
+                min-height: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="options-container">
+        <h1>Choose Your Option</h1>
+        <div class="option-wrapper">
+            <a href="option1.html" class="option-button">
+                <div class="option-title">Event Management</div>
+                <div class="option-desc">Manage and organize events</div>
+            </a>    
+            <a href="option2.html" class="option-button">
+                <div class="option-title">Service Management</div>
+                <div class="option-desc">Handle service operations</div>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Translator functionality for options page
+        const translations = {
+            hi: {
+                "Choose Your Option": "अपना विकल्प चुनें",
+                "Event Management": "इवेंट प्रबंधन",
+                "Manage and organize events": "इवेंट्स को प्रबंधित और व्यवस्थित करें",
+                "Service Management": "सेवा प्रबंधन",
+                "Handle service operations": "सेवा संचालन संभालें"
+            },
+            te: {
+                "Choose Your Option": "మీ ఎంపికను ఎంచుకోండి",
+                "Event Management": "ఈవెంట్ మేనేజ్‌మెంట్",
+                "Manage and organize events": "ఈవెంట్‌లను నిర్వహించండి మరియు నిర్మించండి",
+                "Service Management": "సర్వీస్ మేనేజ్‌మెంట్",
+                "Handle service operations": "సర్వీస్ ఆపరేషన్‌లను నిర్వహించండి"
+            },
+            mr: {
+                "Choose Your Option": "तुमचा पर्याय निवडा",
+                "Event Management": "इव्हेंट व्यवस्थापन",
+                "Manage and organize events": "इव्हेंट्स व्यवस्थापित आणि आयोजित करा",
+                "Service Management": "सेवा व्यवस्थापन",
+                "Handle service operations": "सेवा ऑपरेशन्स हाताळा"
+            },
+            ta: {
+                "Choose Your Option": "உங்கள் விருப்பத்தைத் தேர்ந்தெடுக்கவும்",
+                "Event Management": "நிகழ்வு நிர்வாகம்",
+                "Manage and organize events": "நிகழ்வுகளை நிர்வகித்து ஒழுங்கமைக்கவும்",
+                "Service Management": "சேவை நிர்வாகம்",
+                "Handle service operations": "சேவை செயல்பாடுகளை கையாளவும்"
+            },
+            ur: {
+                "Choose Your Option": "اپنا انتخاب کریں",
+                "Event Management": "ایونٹ مینجمنٹ",
+                "Manage and organize events": "ایونٹس کا انتظام اور تنظیم کریں",
+                "Service Management": "سروس مینجمنٹ",
+                "Handle service operations": "سروس آپریشنز سنبھالیں"
+            },
+            gu: {
+                "Choose Your Option": "તમારો વિકલ્પ પસંદ કરો",
+                "Event Management": "ઇવેન્ટ મેનેજમેન્ટ",
+                "Manage and organize events": "ઇવેન્ટ્સ મેનેજ કરો અને ઓર્ગેનાઇઝ કરો",
+                "Service Management": "સર્વિસ મેનેજમેન્ટ",
+                "Handle service operations": "સર્વિસ ઓપરેશન્સ હેન્ડલ કરો"
+            },
+            kn: {
+                "Choose Your Option": "ನಿಮ್ಮ ಆಯ್ಕೆಯನ್ನು ಆಯ್ಕೆ ಮಾಡಿ",
+                "Event Management": "ಈವೆಂಟ್ ನಿರ್ವಹಣೆ",
+                "Manage and organize events": "ಈವೆಂಟ್‌ಗಳನ್ನು ನಿರ್ವಹಿಸಿ ಮತ್ತು ಸಂಘಟಿಸಿ",
+                "Service Management": "ಸೇವೆ ನಿರ್ವಹಣೆ",
+                "Handle service operations": "ಸೇವೆ ಕಾರ್ಯಾಚರಣೆಗಳನ್ನು ನಿರ್ವಹಿಸಿ"
+            },
+            or: {
+                "Choose Your Option": "ଆପଣଙ୍କ ବିକଳ୍ପ ବାଛନ୍ତୁ",
+                "Event Management": "ଇଭେଣ୍ଟ ମ୍ୟାନେଜମେଣ୍ଟ",
+                "Manage and organize events": "ଇଭେଣ୍ଟଗୁଡ଼ିକୁ ପରିଚାଳନା ଏବଂ ସଂଗଠିତ କରନ୍ତୁ",
+                "Service Management": "ସର୍ଭିସ ମ୍ୟାନେଜମେଣ୍ଟ",
+                "Handle service operations": "ସର୍ଭିସ ଅପରେସନଗୁଡ଼ିକୁ ନିୟନ୍ତ୍ରଣ କରନ୍ତୁ"
+            },
+            pa: {
+                "Choose Your Option": "ਆਪਣਾ ਵਿਕਲਪ ਚੁਣੋ",
+                "Event Management": "ਈਵੈਂਟ ਪ੍ਰਬੰਧਨ",
+                "Manage and organize events": "ਈਵੈਂਟਾਂ ਦਾ ਪ੍ਰਬੰਧਨ ਅਤੇ ਆਯੋਜਨ ਕਰੋ",
+                "Service Management": "ਸੇਵਾ ਪ੍ਰਬੰਧਨ",
+                "Handle service operations": "ਸੇਵਾ ਆਪਰੇਸ਼ਨਾਂ ਨੂੰ ਸੰਭਾਲੋ"
+            },
+            as: {
+                "Choose Your Option": "আপোনাৰ বাছনি বাছক",
+                "Event Management": "ইভেন্ট ব্যৱস্থাপনা",
+                "Manage and organize events": "ইভেন্টবোৰ ব্যৱস্থাপনা আৰু সংগঠিত কৰক",
+                "Service Management": "সেৱা ব্যৱস্থাপনা",
+                "Handle service operations": "সেৱা কাৰ্য্যবোৰ নিয়ন্ত্ৰণ কৰক"
+            },
+            ml: {
+                "Choose Your Option": "നിങ്ങളുടെ ഓപ്ഷൻ തിരഞ്ഞെടുക്കുക",
+                "Event Management": "ഇവന്റ് മാനേജ്മെന്റ്",
+                "Manage and organize events": "ഇവന്റുകൾ നിയന്ത്രിക്കുകയും സംഘടിപ്പിക്കുകയും ചെയ്യുക",
+                "Service Management": "സേവന മാനേജ്മെന്റ്",
+                "Handle service operations": "സേവന പ്രവർത്തനങ്ങൾ കൈകാര്യം ചെയ്യുക"
+            },
+            ne: {
+                "Choose Your Option": "आफ्नो विकल्प चयन गर्नुहोस्",
+                "Event Management": "इभेन्ट व्यवस्थापन",
+                "Manage and organize events": "इभेन्टहरू व्यवस्थापन र आयोजन गर्नुहोस्",
+                "Service Management": "सेवा व्यवस्थापन",
+                "Handle service operations": "सेवा सञ्चालनहरू ह्यान्डल गर्नुहोस्"
+            },
+            si: {
+                "Choose Your Option": "ඔබේ විකල්පය තෝරන්න",
+                "Event Management": "සිදුවීම් කළමනාකරණය",
+                "Manage and organize events": "සිදුවීම් කළමනාකරණය සහ සංවිධානය කරන්න",
+                "Service Management": "සේවා කළමනාකරණය",
+                "Handle service operations": "සේවා මෙහෙකරුවා කළමනාකරණය කරන්න"
+            },
+            bn: {
+                "Choose Your Option": "আপনার বিকল্প নির্বাচন করুন",
+                "Event Management": "ইভেন্ট ম্যানেজমেন্ট",
+                "Manage and organize events": "ইভেন্টগুলি পরিচালনা এবং সংগঠিত করুন",
+                "Service Management": "সার্ভিস ম্যানেজমেন্ট",
+                "Handle service operations": "সার্ভিস অপারেশনগুলি পরিচালনা করুন"
+            }
+        };
+
+        // Apply translation on page load
+        window.addEventListener('load', function() {
+            const savedLanguage = localStorage.getItem('selectedLanguage');
+            if (savedLanguage && savedLanguage !== 'en') {
+                setTimeout(() => {
+                    applyTranslation(savedLanguage);
+                }, 100);
+            }
+        });
+
+        // Function to apply translation
+        function applyTranslation(language) {
+            if (language === 'en') return;
+
+            const langTranslations = translations[language];
+            if (!langTranslations) return;
+
+            // Translate all text content on the page
+            const elements = document.querySelectorAll('*');
+            elements.forEach(element => {
+                if (element.children.length === 0 && element.textContent.trim()) {
+                    const originalText = element.textContent.trim();
+                    if (langTranslations[originalText]) {
+                        element.textContent = langTranslations[originalText];
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+</content>
